@@ -22,3 +22,6 @@ local.properties
 *.dex
 *.class
 ShowMe3D_backup_*.zip
+.vibelab/
+/assets/
+.pico-env.json

@@ -3814,16 +3814,22 @@ fun StudioStage() {
     }
 
     LaunchedEffect(homeFloatingModels, vm.screen) {
+        val models = homeFloatingModels ?: return@LaunchedEffect
+        if (vm.screen != AppScreen.HOME) {
+            models.applyRiftTransitionScale(1f)
+            models.update(liveHomePosition.value, false, null, 0f)
+            return@LaunchedEffect
+        }
         while (isActive) {
             val frameNanos = withFrameNanos { it }
-            homeFloatingModels?.update(
+            models.update(
                 homePosition = liveHomePosition.value,
-                visible = vm.screen == AppScreen.HOME,
+                visible = true,
                 viewer = viewerPose.position,
                 frameTimeSeconds = frameNanos / 1_000_000_000f,
                 followHomeOnly = vm.screen == AppScreen.HOME && panelDragState.active,
             )
-            homeFloatingModels?.applyRiftTransitionScale(homeRiftSceneProgress.value)
+            models.applyRiftTransitionScale(homeRiftSceneProgress.value)
         }
     }
 

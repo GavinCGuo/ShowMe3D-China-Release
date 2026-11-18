@@ -78,7 +78,7 @@ class HomeFloatingModels {
             interactionSizes[spec.id] = interactionSize
             addModelInteractions(root, interactionSize)
             startEmbeddedAnimations(model)
-            yawDegrees[spec.id] = spec.defaultYawDegrees
+            yawDegrees.remove(spec.id)
             root.enabled = false
             visibleStates[spec.id] = false
             appearStartNanos[spec.id] = System.nanoTime()
@@ -132,6 +132,8 @@ class HomeFloatingModels {
                 appearStartNanos[spec.id] = nowNanos
                 motionUpdateNanos.remove(spec.id)
             }
+            // Skip SDK component queries between decor ticks; active gestures keep their frame cadence.
+            if (!decorUpdateDue && spec.id !in manipulationTargets && spec.id !in motionUpdateNanos) return@forEach
             val transform = root.components.get(TransformComponent::class.java) ?: return@forEach
             if (previousHome != null && followHomeOnly) {
                 if (homeMoved) {
@@ -190,7 +192,10 @@ class HomeFloatingModels {
                     )
                 )
                 val currentScale = transform.scaleVector.x
-                transform.setScaleVector(Vector3(currentScale + (targetScale - currentScale) * t))
+                if (currentScale != targetScale) {
+                    val scale = if (abs(currentScale - targetScale) < SCALE_SETTLE_EPSILON) targetScale else currentScale + (targetScale - currentScale) * t
+                    transform.setScaleVector(Vector3(scale))
+                }
                 applyDefaultRotation(spec, transform, targetPosition, viewer)
                 if (!motionUpdateDue) motionUpdateNanos.remove(spec.id)
             } else {
@@ -213,6 +218,7 @@ class HomeFloatingModels {
     }
 
     fun applyRiftTransitionScale(progress: Float) {
+        if (progress >= 0.999f && riftTransitionBaseScales.isEmpty()) return
         val safeProgress = progress.coerceIn(0f, 1f)
         HomeFloatingModelSpecs.forEach { spec ->
             val root = roots[spec.id] ?: return@forEach
@@ -405,6 +411,7 @@ class HomeFloatingModels {
         viewer: Vector3?,
     ) {
         val yaw = defaultYawDegreesFor(spec, position, viewer)
+        if (abs(yaw - (yawDegrees[spec.id] ?: Float.POSITIVE_INFINITY)) < 0.12f) return
         yawDegrees[spec.id] = yaw
         transform.setEulerAngles(EulerAngles(0f, yaw, 0f))
     }

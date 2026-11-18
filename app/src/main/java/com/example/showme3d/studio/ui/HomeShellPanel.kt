@@ -118,7 +118,6 @@ fun HomeUnifiedPanel(
             .height(570.dp)
             .shadow(18.dp, panelShape)
             .clip(panelShape)
-            .backgroundMaterial(true, Material.Regular)
             .background(StitchColors.HomeSurface)
             .border(4.dp, StitchColors.HomeCream, panelShape)
     ) {

@@ -1,0 +1,39 @@
+app:
+  id: "7696971379161497636"
+  name: ShowMe3D 空间创作
+  slogan: 把模型、图像和灵感放进真实空间，创作可以走近观察的三维演示。
+  description: |-
+    ShowMe3D 是面向 PICO 头显的空间创作与三维演示工具。你可以将模型、图片、文字和手绘线条摆进空间，调整位置、角度和大小，用白板自由整理想法，也可以用分页演示讲清结构、过程和故事。
+
+    每一页可以呈现不同的空间状态，配合物体动画、视点和讲解标注，让观众走近细节，从不同角度理解内容。应用内置好奇号装配、室内空间和恐龙探索示例。
+
+    本版本无需配置 API，可使用本地资源导入、空间编辑、分页演示及内置示例。云端 AI 助手与生成功能暂未开放，相关入口显示“即将开放”。
+  tags:
+    - 实用工具
+  category: application
+  icon: uri:tos-cn-i-1f2op84boi/345864ca-c1f1-431f-ba2b-7b32cf7c0555.png
+  landscape: uri:tos-cn-i-1f2op84boi/439614d4-5c9f-4074-92aa-d07d6a867fc1.png
+  detail_images:
+    - uri:tos-cn-i-1f2op84boi/ed4298b7-cbca-40ad-b3ea-784a4a4f76ae.jpeg
+    - uri:tos-cn-i-1f2op84boi/992a79d1-df98-4258-8b3b-975a72fa4745.jpeg
+    - uri:tos-cn-i-1f2op84boi/ba411bac-f26f-415c-ab3e-b3d73a2d5de8.jpeg
+    - uri:tos-cn-i-1f2op84boi/d02e6b52-b3f3-40b4-9bd6-972bd2fd8200.jpeg
+    - uri:tos-cn-i-1f2op84boi/6a9dbea4-7746-4be8-bc30-fc9b2179ec93.jpeg
+    - uri:tos-cn-i-1f2op84boi/b8c45f7d-e105-4197-a32c-c2caa915e592.jpeg
+    - uri:tos-cn-i-1f2op84boi/24cc4d85-6c7c-4670-90ab-d0adaa7489b6.jpeg
+  videos:
+    - file: uri:tos-cn-i-1f2op84boi/0910d7de-dbed-4eea-9701-1060e624d752.mp4
+      cover: uri:tos-cn-i-1f2op84boi/aee06409-88e9-441d-80bb-1f01c0ca0cf0.jpg
+version:
+  name: 1.0.2
+  notes: 优化首页八个悬浮模型的渲染表现，降低模型复杂度，减少空闲时的重复更新，提升进入首页和浏览时的流畅度。
+build:
+  repo_url: https://github.com/GavinCGuo/ShowMe3D-China-Release
+  repo_visibility: public
+  tech_stack: android_spatial
+  ai_tool: Codex CLI
+  ai_model: Codex
+  features:
+    - hand_tracking
+    - mixed_reality
+  teammates: []
