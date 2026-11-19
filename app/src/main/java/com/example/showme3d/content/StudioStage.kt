@@ -1,5 +1,6 @@
 package com.example.showme3d.content
 
+import com.example.showme3d.R
 import com.example.showme3d.release.ReleasePolicy
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -71,6 +72,7 @@ import com.example.showme3d.studio.agent.DoubaoToolCall
 import com.example.showme3d.studio.agent.ToolExecutor
 import com.example.showme3d.studio.examples.CuriosityExampleAssetInstaller
 import com.example.showme3d.studio.examples.DinosaurDetectiveExampleAssetInstaller
+import com.example.showme3d.studio.examples.PictureBookExample
 import com.example.showme3d.studio.examples.HomeExamplePreset
 import com.example.showme3d.studio.examples.ImmersiveInteriorExampleAssetInstaller
 import com.example.showme3d.studio.imports.ImportedAsset
@@ -127,8 +129,8 @@ import com.example.showme3d.studio.ui.ImageToImagePanel
 import com.example.showme3d.studio.ui.ImageSubjectPreprocessChoicePanel
 import com.example.showme3d.studio.ui.PageStripPanel
 import com.example.showme3d.studio.ui.PanelPosition
+import com.example.showme3d.studio.ui.ExampleChallengePanel
 import com.example.showme3d.studio.ui.PresentPanel
-import com.example.showme3d.studio.ui.RotationControlsPanel
 import com.example.showme3d.studio.ui.SelectionBarPanel
 import com.example.showme3d.studio.ui.AnnotationManagePanel
 import com.example.showme3d.studio.ui.CommentEditorPanel
@@ -177,13 +179,19 @@ import kotlin.math.sqrt
 fun StudioStage() {
     val context = LocalContext.current
     val vm = remember { StudioViewModel() }
+    if (vm.screen == AppScreen.EDITOR) {
+        val track = when (vm.builtInExamplePreset) {
+            HomeExamplePreset.ALICE_IN_WONDERLAND -> R.raw.alice_music
+            HomeExamplePreset.THREE_LITTLE_PIGS -> R.raw.three_pigs_music
+            else -> R.raw.interior_music.takeIf { vm.document.objects.containsKey("interior_shell") }
+        }
+        if (track != null) ExampleBackgroundMusic(track)
+    }
     val showRepository = remember(context) { ShowFileRepository(context.applicationContext) }
     val aigcStore = remember(context) { AigcSettingsStore(context.applicationContext) }
     val scope = rememberCoroutineScope()
     var scene by remember { mutableStateOf<SceneController?>(null) }
     var homeFloatingModels by remember { mutableStateOf<HomeFloatingModels?>(null) }
-    var homeFloatingSelectedId by remember { mutableStateOf<String?>(null) }
-    var homeFloatingRevision by remember { mutableStateOf(0) }
     var homeFloatingManipulationActive by remember { mutableStateOf(false) }
     var homeFloatingTargetPointerActive by remember { mutableStateOf(false) }
     var storageReady by remember { mutableStateOf(false) }
@@ -3478,7 +3486,7 @@ fun StudioStage() {
         }
     }
 
-    LaunchedEffect(scene, vm.screen) {
+    LaunchedEffect(homeRiftController, vm.screen) {
         val rift = homeRiftController ?: return@LaunchedEffect
         if (vm.screen != AppScreen.HOME) {
             homeRiftSession.cancel()
@@ -3494,21 +3502,24 @@ fun StudioStage() {
                 if (pinchCandidates.hasTwoHandRiftPinch()) {
                     homeRiftClickGuard.suppressFor(HOME_RIFT_CLICK_SUPPRESS_NANOS)
                 }
-                val homeFloatingGazeTargeted = if (pinchCandidates.hasAnyHomeRiftPinch()) {
+                val gazeTarget = if (pinchCandidates.hasAnyHomeRiftPinch()) {
                     val viewerPosition = viewerPose.position
                     val viewerRotation = viewerPose.rotation
-                    viewerPosition != null && viewerRotation != null &&
-                        homeFloatingModels?.isViewerTargetingModel(viewerPosition, viewerRotation) == true
-                } else {
-                    false
-                }
+                    if (viewerPosition != null && viewerRotation != null)
+                        homeFloatingModels?.viewerTargetedModel(viewerPosition, viewerRotation) else null
+                } else null
                 val pageGestureBlocked = homePageGestureActive ||
                     System.nanoTime() < homePageGestureBlockedUntilNanos
+                val grab = homeFloatingModels?.trackedGrab
+                if (grab?.active == true || (!homeRiftSession.isLocked && !pageGestureBlocked &&
+                        !workspaceDragPointerActive && !panelDragState.active)) {
+                    grab?.update(pinchCandidates, gazeTarget.takeUnless { uiPointerActive })
+                }
                 if (!homeRiftSession.isLocked && (
                     pageGestureBlocked ||
                     workspaceDragPointerActive ||
                     panelDragState.active ||
-                    homeFloatingGazeTargeted ||
+                    gazeTarget != null ||
                     homeFloatingTargetPointerActive ||
                     homeFloatingManipulationActive ||
                     vm.objectManipulationInProgress
@@ -3702,7 +3713,7 @@ fun StudioStage() {
             )
             if (vm.mode == AppMode.EDIT && vm.animationDraft != null) {
                 controller.flushAnimationEndpointChrome()
-                listOf(SELECTION_ID, SELECTION_POPUP_ID, ANIMATION_START_CONTROLS_ID, ANIMATION_END_CONTROLS_ID).forEach { panelId ->
+                listOf(SELECTION_ID, SELECTION_POPUP_ID).forEach { panelId ->
                     val entity = panelEntities[panelId] ?: return@forEach
                     setPanelPosition(
                         entity,
@@ -3724,8 +3735,6 @@ fun StudioStage() {
                             toolbarMoreOpen = toolbarMoreOpen,
                             homeActionShowIndex = homeActionShowIndex,
                             homeDeleteShowIndex = homeDeleteShowIndex,
-                            homeFloatingRotationPosition = homeFloatingModels?.rotationControlsPosition(homeFloatingSelectedId),
-                            homeFloatingRotationScale = homeFloatingModels?.rotationControlsScale(homeFloatingSelectedId),
                             aigcKeyConfigOpen = aigcKeyConfigPromptOpen,
                             agentPanelOpen = agentPanelOpen || agentPanelVisibleForAnimation,
                             agentToolbarExpanded = agentToolbarExpanded,
@@ -3783,8 +3792,6 @@ fun StudioStage() {
                     toolbarMoreOpen = toolbarMoreOpen,
                     homeActionShowIndex = homeActionShowIndex,
                     homeDeleteShowIndex = homeDeleteShowIndex,
-                    homeFloatingRotationPosition = homeFloatingModels?.rotationControlsPosition(homeFloatingSelectedId),
-                    homeFloatingRotationScale = homeFloatingModels?.rotationControlsScale(homeFloatingSelectedId),
                     aigcKeyConfigOpen = aigcKeyConfigPromptOpen,
                     agentPanelOpen = agentPanelOpen || agentPanelVisibleForAnimation,
                     agentToolbarExpanded = agentToolbarExpanded,
@@ -3855,8 +3862,6 @@ fun StudioStage() {
         toolbarMoreOpen,
         homeActionShowIndex,
         homeDeleteShowIndex,
-        homeFloatingSelectedId,
-        homeFloatingRevision,
         homeFloatingManipulationActive,
         aigcKeyConfigPromptOpen,
         agentPanelOpen,
@@ -3892,8 +3897,6 @@ fun StudioStage() {
                     toolbarMoreOpen = toolbarMoreOpen,
                     homeActionShowIndex = homeActionShowIndex,
                     homeDeleteShowIndex = homeDeleteShowIndex,
-                    homeFloatingRotationPosition = homeFloatingModels?.rotationControlsPosition(homeFloatingSelectedId),
-                    homeFloatingRotationScale = homeFloatingModels?.rotationControlsScale(homeFloatingSelectedId),
                     aigcKeyConfigOpen = aigcKeyConfigPromptOpen,
                     agentPanelOpen = agentPanelOpen || agentPanelVisibleForAnimation,
                     agentToolbarExpanded = agentToolbarExpanded,
@@ -3944,7 +3947,7 @@ fun StudioStage() {
         chromeProgress.value,
         activeSelectionPopupObjectId,
     ) {
-        listOf(SELECTION_ID, SELECTION_POPUP_ID, ANIMATION_START_CONTROLS_ID, ANIMATION_END_CONTROLS_ID).forEach { panelId ->
+        listOf(SELECTION_ID, SELECTION_POPUP_ID).forEach { panelId ->
             val entity = panelEntities[panelId] ?: return@forEach
             setPanelPosition(
                 entity,
@@ -3966,8 +3969,6 @@ fun StudioStage() {
                     toolbarMoreOpen = toolbarMoreOpen,
                     homeActionShowIndex = homeActionShowIndex,
                     homeDeleteShowIndex = homeDeleteShowIndex,
-                    homeFloatingRotationPosition = homeFloatingModels?.rotationControlsPosition(homeFloatingSelectedId),
-                    homeFloatingRotationScale = homeFloatingModels?.rotationControlsScale(homeFloatingSelectedId),
                     aigcKeyConfigOpen = aigcKeyConfigPromptOpen,
                     agentPanelOpen = agentPanelOpen || agentPanelVisibleForAnimation,
                     agentToolbarExpanded = agentToolbarExpanded,
@@ -4005,8 +4006,6 @@ fun StudioStage() {
                     toolbarMoreOpen = toolbarMoreOpen,
                     homeActionShowIndex = homeActionShowIndex,
                     homeDeleteShowIndex = homeDeleteShowIndex,
-                    homeFloatingRotationPosition = homeFloatingModels?.rotationControlsPosition(homeFloatingSelectedId),
-                    homeFloatingRotationScale = homeFloatingModels?.rotationControlsScale(homeFloatingSelectedId),
                     aigcKeyConfigOpen = aigcKeyConfigPromptOpen,
                     agentPanelOpen = agentPanelOpen || agentPanelVisibleForAnimation,
                     agentToolbarExpanded = agentToolbarExpanded,
@@ -4075,12 +4074,9 @@ fun StudioStage() {
             }
             .homeFloatingModelManipulatable(
                 context,
-                { if (homeRiftCapturing) null else homeFloatingModels },
-                { homeFloatingSelectedId = it },
-                { homeFloatingSelectedId },
+                { if (vm.screen == AppScreen.HOME && !homeRiftCapturing) homeFloatingModels else null },
                 { homeFloatingTargetPointerActive = it },
                 { homeFloatingManipulationActive = it },
-                { homeFloatingRevision++ },
             )
             .selectable(
                 context,
@@ -4094,15 +4090,11 @@ fun StudioStage() {
                         vm.exitViewpoint()
                         true
                     } else {
-                        homeFloatingModels?.idFor(entity)?.let {
-                            homeFloatingSelectedId = it
-                            homeFloatingRevision++
-                            true
-                        } == true
+                        homeFloatingModels?.idFor(entity) != null
                     }
                 },
             )
-            .manipulatable(context, vm, { scene }, { vm.selectedObjectId?.let { scene?.entityFor(it) } })
+            .manipulatable(context, vm, scene)
             .workspaceDraggable(
                 context,
                 { if (homeRiftCapturing) null else workspaceDragHandle },
@@ -4125,10 +4117,10 @@ fun StudioStage() {
                     controller.cloneVirtualEnvironmentForPortal()?.let(rift::setVirtualEnvironmentPreview)
                 }
             }
-            val floatingModels = HomeFloatingModels()
+            val floatingModels = HomeFloatingModels(content)
             homeFloatingModels = floatingModels
             scope.launch {
-                floatingModels.load(content)
+                floatingModels.load()
             }
             workspaceDragHandle = createWorkspaceDragHandle().also { content.addEntity(it) }
             panelEntities = PanelIds.mapNotNull { panelId ->
@@ -4155,8 +4147,6 @@ fun StudioStage() {
                         toolbarMoreOpen = toolbarMoreOpen,
                         homeActionShowIndex = homeActionShowIndex,
                         homeDeleteShowIndex = homeDeleteShowIndex,
-                        homeFloatingRotationPosition = homeFloatingModels?.rotationControlsPosition(homeFloatingSelectedId),
-                        homeFloatingRotationScale = homeFloatingModels?.rotationControlsScale(homeFloatingSelectedId),
                         aigcKeyConfigOpen = aigcKeyConfigPromptOpen,
                         agentPanelOpen = agentPanelOpen || agentPanelVisibleForAnimation,
                         agentToolbarExpanded = agentToolbarExpanded,
@@ -4367,28 +4357,6 @@ fun StudioStage() {
                                     requestHomeEnvironmentToggle()
                                 }
                             }
-                        },
-                    )
-                }
-            }
-            AttachmentPanel(id = HOME_FLOATING_ROTATION_ID) {
-                AnimatedVisibility(
-                    visible = vm.screen == AppScreen.HOME &&
-                        homeFloatingSelectedId != null &&
-                        !homeFloatingManipulationActive &&
-                        !homeRiftTransitioning,
-                    enter = fadeIn() + scaleIn(initialScale = 0.82f),
-                    exit = fadeOut() + scaleOut(targetScale = 0.82f),
-                ) {
-                    RotationControlsPanel(
-                        onRotateStart = {},
-                        onRotate = { deltaRadians ->
-                            homeFloatingModels?.rotate(homeFloatingSelectedId, deltaRadians)
-                            homeFloatingRevision++
-                        },
-                        onRotateEnd = {
-                            homeFloatingModels?.logCalibrationSnapshot()
-                            homeFloatingRevision++
                         },
                     )
                 }
@@ -4710,26 +4678,6 @@ fun StudioStage() {
                                         horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
                                         verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(6.dp),
                                     ) {
-                                        if (
-                                            vm.animationDraft == null &&
-                                            !selected.isLocked &&
-                                            selected.type != ObjectType.TEXT
-                                        ) {
-                                            RotationControlsPanel(
-                                                reverseDirection = selected.type == ObjectType.VIEWPOINT,
-                                                onRotateStart = { vm.beginSelectedRotation() },
-                                                onRotate = { deltaRadians ->
-                                                    vm.previewSelectedRotation(deltaRadians)?.let { (objectId, transform) ->
-                                                        scene?.pushTransform(objectId, transform)
-                                                    }
-                                                },
-                                                onRotateEnd = {
-                                                    vm.commitSelectedRotation()?.let { (objectId, transform) ->
-                                                        scene?.pushTransform(objectId, transform)
-                                                    }
-                                                },
-                                            )
-                                        }
                                         if (vm.selectedAnimationEndpoint == null && vm.animationDraft == null) {
                                             val selectedImageSubjectPreviewBusy = selected.id in imageSubjectPreviewBusyObjectIds
                                             val selectedImageToModelBusy = selected.id in imageToModelBusyObjectIds
@@ -5127,20 +5075,6 @@ fun StudioStage() {
                     }
                 }
             }
-            AttachmentPanel(id = ANIMATION_START_CONTROLS_ID) {
-                AnimationEndpointRotatePanel(
-                    endpointId = vm.animationDraft?.startEndpointId,
-                    vm = vm,
-                    scene = scene,
-                )
-            }
-            AttachmentPanel(id = ANIMATION_END_CONTROLS_ID) {
-                AnimationEndpointRotatePanel(
-                    endpointId = vm.animationDraft?.endEndpointId,
-                    vm = vm,
-                    scene = scene,
-                )
-            }
             AttachmentPanel(id = STROKE_ID) {
                 AnimatedVisibility(
                     visible = vm.screen == AppScreen.EDITOR && vm.mode == AppMode.EDIT && vm.panel == StudioPanel.STROKE,
@@ -5178,6 +5112,11 @@ fun StudioStage() {
             AttachmentPanel(id = PRESENT_ID) {
                 if (vm.screen == AppScreen.EDITOR && vm.mode == AppMode.PRESENT && vm.viewpointModeObjectId == null) {
                     PresentPanel(
+                        challenge = {
+                            androidx.compose.runtime.key(vm.document.id) {
+                                ExampleChallengePanel(vm.currentPage.id, scene?.seatedPartCount ?: 0)
+                            }
+                        },
                         title = vm.document.name,
                         currentPageIndex = vm.currentPageIndex,
                         pageCount = vm.pageCount,
@@ -5204,6 +5143,17 @@ fun StudioStage() {
                         shows = vm.showSummaries,
                         onCreatePreset = { preset ->
                             when (preset) {
+                                HomeExamplePreset.ALICE_IN_WONDERLAND, HomeExamplePreset.THREE_LITTLE_PIGS -> {
+                                    val book = PictureBookExample.entries.first { it.preset == preset }
+                                    scope.launch {
+                                        withContext(Dispatchers.IO) {
+                                            book.load(context.applicationContext, showRepository)
+                                        }.onSuccess { vm.presentPictureBook(book, it) }
+                                            .onFailure {
+                                                vm.reportSceneError("${book.title}加载失败：${it.message ?: it.javaClass.simpleName}")
+                                            }
+                                    }
+                                }
                                 HomeExamplePreset.CURIOSITY_ASSEMBLY -> {
                                     scope.launch {
                                         val installed = withContext(Dispatchers.IO) {
@@ -5320,41 +5270,6 @@ fun StudioStage() {
     )
 }
 
-@Composable
-private fun AnimationEndpointRotatePanel(
-    endpointId: String?,
-    vm: StudioViewModel,
-    scene: SceneController?,
-) {
-    if (vm.screen != AppScreen.EDITOR || vm.mode != AppMode.EDIT || endpointId == null) return
-    var activeTransform by remember(endpointId) { mutableStateOf<TransformData?>(null) }
-    AnimatedVisibility(
-        visible = vm.selectedAnimationEndpoint?.id == endpointId,
-        enter = fadeIn() + scaleIn(initialScale = 0.82f),
-        exit = fadeOut() + scaleOut(targetScale = 0.82f),
-    ) {
-        RotationControlsPanel(
-            onRotateStart = {
-                activeTransform = vm.currentTransform(endpointId)
-                vm.beginTransformPreview(endpointId, activeTransform)
-            },
-            onRotate = { deltaRadians ->
-                val current = activeTransform ?: vm.currentTransform(endpointId) ?: return@RotationControlsPanel
-                val next = current.copy(rotationY = current.rotationY + deltaRadians)
-                activeTransform = next
-                vm.previewTransform(endpointId, next)
-                scene?.pushTransform(endpointId, next)
-            },
-            onRotateEnd = {
-                val current = activeTransform ?: vm.currentTransform(endpointId) ?: return@RotationControlsPanel
-                vm.commitTransform(endpointId, current)
-                scene?.pushTransform(endpointId, current)
-                activeTransform = null
-            },
-        )
-    }
-}
-
 private const val TOOLBAR_ID = "studio_toolbar"
 private const val TOOLBAR_UNDO_ID = "studio_toolbar_undo"
 private const val TOOLBAR_MORE_ID = "studio_toolbar_more"
@@ -5365,8 +5280,6 @@ private const val AIGC_LIBRARY_ID = "studio_aigc_library"
 private const val SELECTION_ID = "studio_selection"
 private const val SELECTION_POPUP_ID = "studio_selection_popup"
 private const val ANNOTATION_ID = "studio_annotation"
-private const val ANIMATION_START_CONTROLS_ID = "studio_animation_start_controls"
-private const val ANIMATION_END_CONTROLS_ID = "studio_animation_end_controls"
 private const val PRESENT_ID = "studio_present"
 private const val FILE_ID = "studio_files"
 private const val AIGC_KEY_CONFIG_ID = "studio_aigc_key_config"
@@ -5381,7 +5294,6 @@ private const val HOME_PRESET_ID = "studio_home_preset"
 private const val HOME_ACTION_MENU_ID = "studio_home_action_menu"
 private const val HOME_DELETE_CONFIRM_ID = "studio_home_delete_confirm"
 private const val HOME_ENVIRONMENT_ID = "studio_home_environment"
-private const val HOME_FLOATING_ROTATION_ID = "studio_home_floating_rotation"
 private const val WORKSPACE_DRAG_HANDLE_ID = "studio_workspace_drag_handle"
 private const val WORKSPACE_DRAG_HANDLE_PANEL_ID = "studio_workspace_drag_handle_panel"
 
@@ -5396,8 +5308,6 @@ private val PanelIds = listOf(
     ANNOTATION_ID,
     SELECTION_ID,
     SELECTION_POPUP_ID,
-    ANIMATION_START_CONTROLS_ID,
-    ANIMATION_END_CONTROLS_ID,
     PRESENT_ID,
     FILE_ID,
     AIGC_KEY_CONFIG_ID,
@@ -5412,7 +5322,6 @@ private val PanelIds = listOf(
     HOME_ACTION_MENU_ID,
     HOME_DELETE_CONFIRM_ID,
     HOME_ENVIRONMENT_ID,
-    HOME_FLOATING_ROTATION_ID,
 )
 
 private val DefaultWorkspacePosition = PanelPosition(0f, 0.76f, -1.25f)
@@ -5459,7 +5368,6 @@ private val HomeMovablePanelIds = setOf(
     HOME_ACTION_MENU_ID,
     HOME_DELETE_CONFIRM_ID,
     HOME_ENVIRONMENT_ID,
-    HOME_FLOATING_ROTATION_ID,
     WORKSPACE_DRAG_HANDLE_PANEL_ID,
 )
 
@@ -5735,8 +5643,6 @@ private fun panelPosition(
     toolbarMoreOpen: Boolean,
     homeActionShowIndex: Int?,
     homeDeleteShowIndex: Int?,
-    homeFloatingRotationPosition: PanelPosition?,
-    homeFloatingRotationScale: Float?,
     aigcKeyConfigOpen: Boolean,
     agentPanelOpen: Boolean,
     agentToolbarExpanded: Boolean,
@@ -5746,15 +5652,6 @@ private fun panelPosition(
     commentEditorPoint: StrokePoint?,
 ): PanelPlacement? =
     when {
-        panelId == ANIMATION_START_CONTROLS_ID || panelId == ANIMATION_END_CONTROLS_ID -> {
-            val targetRoleIsStart = panelId == ANIMATION_START_CONTROLS_ID
-            scene?.animationEndpointControlsPosition(targetRoleIsStart)?.let { position ->
-                PanelPlacement(
-                    position = PanelPosition(position.x, position.y, position.z),
-                    scale = scene.animationEndpointControlsScale(targetRoleIsStart) ?: 1f,
-                )
-            }
-        }
         panelId == HOME_PRESET_ID -> if (screen == AppScreen.HOME) {
             PanelPlacement(homePosition + HomePresetPanelOffset, scale = HOME_WING_UI_SCALE)
         } else {
@@ -5772,11 +5669,6 @@ private fun panelPosition(
         }
         panelId == HOME_ENVIRONMENT_ID -> if (screen == AppScreen.HOME) {
             PanelPlacement(homePosition + HomeEnvironmentOffset, scale = HOME_FLOATING_UI_SCALE)
-        } else {
-            null
-        }
-        panelId == HOME_FLOATING_ROTATION_ID -> if (screen == AppScreen.HOME && homeFloatingRotationPosition != null) {
-            PanelPlacement(homeFloatingRotationPosition, scale = homeFloatingRotationScale ?: HOME_FLOATING_UI_SCALE)
         } else {
             null
         }

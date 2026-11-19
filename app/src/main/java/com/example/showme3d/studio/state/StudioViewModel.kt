@@ -7,6 +7,7 @@ import com.example.showme3d.library.PresetAsset
 import com.example.showme3d.library.PresetLibrary
 import com.example.showme3d.studio.examples.CuriosityExampleAssets
 import com.example.showme3d.studio.examples.DinosaurDetectiveExampleAssets
+import com.example.showme3d.studio.examples.PictureBookExample
 import com.example.showme3d.studio.examples.HomeExamplePreset
 import com.example.showme3d.studio.examples.ImmersiveInteriorExampleAssets
 import com.example.showme3d.studio.examples.createDinosaurDetectiveExampleDocument
@@ -202,7 +203,8 @@ class StudioViewModel {
     private val undoStack = mutableListOf<EditorSnapshot>()
     private val redoStack = mutableListOf<EditorSnapshot>()
     private var activeEditorBatch: EditorBatch? = null
-    private var builtInExamplePreset: HomeExamplePreset? = null
+    var builtInExamplePreset: HomeExamplePreset? by mutableStateOf(null)
+        private set
     private var builtInExampleReturnPageIndex = 0
 
     var activeShowIndex by mutableStateOf(0)
@@ -2067,6 +2069,10 @@ class StudioViewModel {
         )
     }
 
+    internal fun presentPictureBook(example: PictureBookExample, document: ShowDocument) {
+        presentBuiltInExample(example.preset, document)
+    }
+
     fun presentDinosaurDetectiveExample(assets: DinosaurDetectiveExampleAssets) {
         presentBuiltInExample(
             preset = HomeExamplePreset.DINOSAUR_DETECTIVE,
@@ -2079,6 +2085,8 @@ class StudioViewModel {
             name = when (preset) {
                 HomeExamplePreset.CURIOSITY_ASSEMBLY -> "把好奇号装起来"
                 HomeExamplePreset.FOUR_STROKE_ENGINE -> "发动机为什么会转"
+                HomeExamplePreset.ALICE_IN_WONDERLAND -> PictureBookExample.ALICE.title
+                HomeExamplePreset.THREE_LITTLE_PIGS -> PictureBookExample.THREE_PIGS.title
                 HomeExamplePreset.IMMERSIVE_INTERIOR -> "走进尚未建成的家"
                 HomeExamplePreset.DINOSAUR_DETECTIVE -> "恐龙侦探：化石里藏着什么？"
             }
@@ -2699,7 +2707,7 @@ class StudioViewModel {
     private fun animationDraftEndpoint(endpointId: String): AnimationEndpointDraft? =
         animationDraft?.endpoints()?.firstOrNull { it.id == endpointId }
 
-    private fun isTransformLocked(objectId: String): Boolean {
+    internal fun isTransformLocked(objectId: String): Boolean {
         if (isObjectLocked(objectId)) return true
         val groupId = currentPage.states[objectId]?.groupId ?: return false
         return currentPage.states.any { (memberId, state) ->

@@ -51,6 +51,16 @@ class ScalePivotMathTest {
         assertPointEquals(worldPivot(start, pivot), worldPivot(end, pivot))
     }
 
+    @Test
+    fun combinedTurnAndScalePreservesPartCenter() {
+        val start = TransformData(rotationY = -0.5f, scale = 1.7f)
+        val pivot = floatArrayOf(0.8f, 0.3f, -0.4f)
+        val next = scaleTransformAroundLocalPivot(start, 2.2f, pivot[0], pivot[1], pivot[2], 0.9f)
+
+        assertPointEquals(worldPivot(start, pivot), worldPivot(next, pivot))
+        assertEquals(0.9f, next.rotationY, EPSILON)
+    }
+
     private fun worldPivot(transform: TransformData, pivot: FloatArray): FloatArray {
         val cosine = cos(transform.rotationY)
         val sine = sin(transform.rotationY)

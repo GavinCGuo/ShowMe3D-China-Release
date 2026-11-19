@@ -11,7 +11,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.verticalScroll
@@ -78,9 +77,7 @@ import com.pico.spatial.ui.design.Text
 import com.pico.spatial.ui.foundation.hover.spatialHoverEffect
 import com.pico.spatial.ui.foundation.material.backgroundMaterial
 import com.pico.spatial.ui.platform.Material
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlin.math.PI
 
 @Composable
 fun ToolbarPanel(
@@ -1687,7 +1684,7 @@ fun AnimationEditorPanel(
             ActionIconButton(R.drawable.ic_close, "关闭动画面板", true, onClose)
         }
         Text(
-            text = if (editingEndpoints) "拖动场景里的起点/终点两个副本来定义动画，点对号生效。" else "选中带动画物体会先定住；点动画可编辑起点/终点。",
+            text = if (editingEndpoints) "单手移动起点或终点，双手转向、缩放。点对号保存。" else "选中带动画物体会先定住；点动画可编辑起点/终点。",
             fontSize = 12.sp,
             color = StudioColors.TextSecondary,
         )
@@ -1765,78 +1762,6 @@ fun AnimationEditorPanel(
                 null -> Unit
             }
         }
-    }
-}
-
-@Composable
-fun RotationControlsPanel(
-    reverseDirection: Boolean = false,
-    onRotateStart: () -> Unit,
-    onRotate: (Float) -> Unit,
-    onRotateEnd: () -> Unit,
-) {
-    val directionSign = if (reverseDirection) -1f else 1f
-    Row(
-        modifier = Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .backgroundMaterial(true, Material.Thin)
-            .background(StitchColors.PanelSurface.copy(alpha = 0.94f))
-            .border(1.dp, StitchColors.PanelOutline, RoundedCornerShape(16.dp))
-            .padding(horizontal = 7.dp, vertical = 5.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        HoldRotateButton(R.drawable.ic_rotate_left, "左旋", direction = -1f * directionSign, onRotateStart, onRotate, onRotateEnd)
-        HoldRotateButton(R.drawable.ic_rotate_right, "右旋", direction = 1f * directionSign, onRotateStart, onRotate, onRotateEnd)
-    }
-}
-
-@Composable
-private fun HoldRotateButton(
-    iconRes: Int,
-    contentDescription: String,
-    direction: Float,
-    onRotateStart: () -> Unit,
-    onRotate: (Float) -> Unit,
-    onRotateEnd: () -> Unit,
-) {
-    var pressed by remember { mutableStateOf(false) }
-    LaunchedEffect(pressed) {
-        if (!pressed) return@LaunchedEffect
-        onRotateStart()
-        var lastFrameNanos = withFrameNanos { it }
-        try {
-            while (isActive) {
-                val frameNanos = withFrameNanos { it }
-                val seconds = (frameNanos - lastFrameNanos) / 1_000_000_000f
-                lastFrameNanos = frameNanos
-                onRotate(direction * ROTATION_BUTTON_RADIANS_PER_SECOND * seconds)
-            }
-        } finally {
-            onRotateEnd()
-        }
-    }
-    Box(
-        modifier = Modifier
-            .width(38.dp)
-            .height(32.dp)
-            .clip(RoundedCornerShape(13.dp))
-            .background(if (pressed) StudioColors.PrimarySoft else StudioColors.SurfaceMuted)
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onPress = {
-                        pressed = true
-                        try {
-                            tryAwaitRelease()
-                        } finally {
-                            pressed = false
-                        }
-                    },
-                )
-            },
-        contentAlignment = Alignment.Center,
-    ) {
-        StitchSymbol(stitchSymbolForDrawable(iconRes) ?: StitchSymbols.Autorenew, contentDescription, size = 19.dp, color = StitchColors.PanelText)
     }
 }
 
@@ -2880,11 +2805,11 @@ private fun InlineEditorPanel(
     }
 }
 
-private const val ROTATION_BUTTON_RADIANS_PER_SECOND = (PI / 2.4).toFloat()
 
 @Composable
 fun PresentPanel(
     title: String,
+    challenge: @Composable () -> Unit = {},
     currentPageIndex: Int,
     pageCount: Int,
     annotationTool: PresentAnnotationTool,
@@ -2899,6 +2824,7 @@ fun PresentPanel(
     onExit: () -> Unit,
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        challenge()
         Box(
             modifier = Modifier
                 .shadow(8.dp, RoundedCornerShape(999.dp))

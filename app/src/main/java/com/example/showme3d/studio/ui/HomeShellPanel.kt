@@ -84,20 +84,36 @@ fun HomeUnifiedPanel(
     val examples = remember {
         listOf(
             HomeExampleScene(
-                title = "把好奇号装起来",
-                detail = "把 NASA 打印件变成可交互的空间装配课。",
-                accent = StudioColors.Primary,
-                type = DocumentType.PRESENTATION,
-                preset = HomeExamplePreset.CURIOSITY_ASSEMBLY,
-                coverRes = R.drawable.cover_curiosity_stitch,
-            ),
-            HomeExampleScene(
                 title = "布置一间手绘小屋",
                 detail = "从空房间开始，把家具和细节一步步放进去。",
                 accent = StudioColors.Warning,
                 type = DocumentType.PRESENTATION,
                 preset = HomeExamplePreset.IMMERSIVE_INTERIOR,
                 coverRes = R.drawable.cover_immersive_interior_cutout,
+            ),
+            HomeExampleScene(
+                title = "爱丽丝梦游仙境",
+                detail = "跟着白兔穿过六幕，去疯茶会赴约，听红心王后审案。",
+                accent = Color(0xFF628974),
+                type = DocumentType.PRESENTATION,
+                preset = HomeExamplePreset.ALICE_IN_WONDERLAND,
+                coverRes = R.drawable.cover_alice_in_wonderland,
+            ),
+            HomeExampleScene(
+                title = "三只小猪",
+                detail = "走进十二页立体绘本，看狼的三口风究竟吹动了什么。",
+                accent = Color(0xFFA86D47),
+                type = DocumentType.PRESENTATION,
+                preset = HomeExamplePreset.THREE_LITTLE_PIGS,
+                coverRes = R.drawable.cover_three_little_pigs,
+            ),
+            HomeExampleScene(
+                title = "把好奇号装起来",
+                detail = "把 NASA 打印件变成可交互的空间装配课。",
+                accent = StudioColors.Primary,
+                type = DocumentType.PRESENTATION,
+                preset = HomeExamplePreset.CURIOSITY_ASSEMBLY,
+                coverRes = R.drawable.cover_curiosity_stitch,
             ),
             HomeExampleScene(
                 title = "恐龙侦探：化石里藏着什么？",
@@ -194,7 +210,7 @@ private fun HomeShowcasePage(
                 color = StitchColors.HomeBrown,
             )
             Text(
-                text = "展现，不只是平面",
+                text = "打开示例体验，或点右下角「＋」新建作品",
                 fontFamily = StitchNunito,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp,

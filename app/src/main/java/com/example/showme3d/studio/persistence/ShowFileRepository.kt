@@ -33,8 +33,10 @@ data class SavedStudioState(
     val restoredFromStorage: Boolean = false,
 )
 
-class ShowFileRepository(context: Context) {
-    private val rootDir = File(context.filesDir, ROOT_DIR)
+class ShowFileRepository internal constructor(filesDir: File) {
+    constructor(context: Context) : this(context.filesDir)
+
+    private val rootDir = File(filesDir, ROOT_DIR)
     private val showDir = File(rootDir, SHOW_DIR)
     private val indexFile = File(rootDir, INDEX_FILE)
 
@@ -107,7 +109,7 @@ class ShowFileRepository(context: Context) {
         )
     }
 
-    private fun parseShow(json: JSONObject): ShowDocument {
+    internal fun parseShow(json: JSONObject): ShowDocument {
         val document = ShowDocument(
             id = json.getString(KEY_ID),
             name = json.optString(KEY_NAME, "Untitled Show"),

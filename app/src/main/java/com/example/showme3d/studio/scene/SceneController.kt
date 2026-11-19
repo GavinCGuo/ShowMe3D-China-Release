@@ -1,5 +1,8 @@
 package com.example.showme3d.studio.scene
 
+import androidx.compose.runtime.mutableStateListOf
+import com.example.showme3d.studio.examples.roverSteps
+import com.example.showme3d.studio.examples.fitsSocket
 import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -29,6 +32,7 @@ import com.example.showme3d.studio.state.StudioViewModel
 import com.pico.spatial.core.container.SpatialViewContent
 import com.pico.spatial.core.ecs.CollisionComponent
 import com.pico.spatial.core.ecs.Entity
+import com.pico.spatial.core.ecs.ViewCoordinateSpace
 import com.pico.spatial.core.ecs.HoverEffectComponent
 import com.pico.spatial.core.ecs.InteractableComponent
 import com.pico.spatial.core.ecs.LookAtComponent
@@ -100,6 +104,9 @@ class SceneController(
     private val autoRotationClockStartSeconds = mutableMapOf<String, Float>()
     private val pageTransitionLockedObjectIds = mutableSetOf<String>()
     private val currentAnimationTransforms = mutableMapOf<String, TransformData>()
+    private val seatedParts = mutableStateListOf<String>()
+    val seatedPartCount: Int get() = seatedParts.size
+
     private var presentationInspectionObjectId: String? = null
     private var lastPresentationInspectionObjectId: String? = null
     private val presentationInspectionTransforms = mutableMapOf<String, TransformData>()
@@ -176,6 +183,7 @@ class SceneController(
                 withContext(Dispatchers.Main.immediate) { removeEntity(objectId) }
             }
             val existingEntity = entities[objectId]
+            if (!state.visible && existingEntity == null) return@forEach
             val entity = existingEntity ?: createEntity(obj) ?: return@forEach
             withContext(Dispatchers.Main.immediate) {
                 syncFaceViewer(entity, obj)
@@ -254,7 +262,7 @@ class SceneController(
         val pageIndexes = listOf(pageIndex + 1, pageIndex - 1)
             .filter { it in vm.document.pages.indices }
         val objectIds = pageIndexes
-            .flatMap { vm.document.pages[it].states.keys }
+            .flatMap { vm.document.pages[it].states.filterValues { state -> state.visible }.keys }
             .distinct()
         for (objectId in objectIds) {
             if (vm.currentPageIndex != pageIndex) return
@@ -271,6 +279,7 @@ class SceneController(
                 vm.animationDraft?.objectId == objectId ||
                 (vm.viewpointModeObjectId != null && vm.isViewpointRelatedObject(objectId))
             ) {
+                stopImportedAnimations(objectId)
                 entity.enabled = false
                 lastVisibility[objectId] = false
             }
@@ -293,6 +302,7 @@ class SceneController(
 
     fun beginPresentationInspection(objectId: String, transform: TransformData) {
         if (!vm.canInspectModelInPresent(objectId)) return
+        seatedParts.remove(objectId)
         presentationResetMotions.remove(objectId)
         presentationInspectionObjectId = objectId
         lastPresentationInspectionObjectId = objectId
@@ -306,8 +316,18 @@ class SceneController(
         entities[objectId]?.let { applyRawTransform(it, transform) }
     }
 
-    fun endPresentationInspection(objectId: String) {
+    fun endPresentationInspection(objectId: String, released: Boolean = true) {
         if (presentationInspectionObjectId != objectId) return
+        val step = roverSteps[vm.currentPage.id]
+        if (released && step != null && objectId in step.parts) {
+            // All curated rover parts share the chassis origin in model space.
+            val socket = visibleTransformForSelection("rover_body")
+            val held = presentationInspectionTransforms[objectId]
+            if (socket != null && held?.fitsSocket(socket) == true) {
+                updatePresentationInspection(objectId, socket)
+                seatedParts.add(objectId)
+            }
+        }
         presentationInspectionObjectId = null
         sceneVersion++
     }
@@ -324,6 +344,7 @@ class SceneController(
         val from = presentationInspectionTransforms[objectId] ?: return false
         val to = vm.currentPage.states[objectId]?.transform ?: return false
         presentationInspectionObjectId = presentationInspectionObjectId.takeUnless { it == objectId }
+        seatedParts.remove(objectId)
         presentationResetMotions[objectId] = PresentationResetMotion(
             from = from,
             to = to,
@@ -333,6 +354,7 @@ class SceneController(
     }
 
     private fun clearPresentationInspections() {
+        seatedParts.clear()
         presentationInspectionObjectId = null
         lastPresentationInspectionObjectId = null
         presentationInspectionTransforms.clear()
@@ -372,30 +394,6 @@ class SceneController(
         )
     }
 
-    fun animationEndpointControlsPosition(start: Boolean): Vector3? {
-        val endpoint = vm.animationDraftEndpoints.firstOrNull {
-            it.role == if (start) AnimationEndpointRole.START else AnimationEndpointRole.END
-        } ?: return null
-        val size = interactionSizes[endpoint.id] ?: ObjectEntityFactory.interactionSize(endpoint.sourceObject)
-        val controlScale = animationEndpointControlsScale(start) ?: 1f
-        val yOffset = ((size.y * endpoint.transform.scale) / 2f) +
-            ANIMATION_ENDPOINT_BADGE_GAP +
-            ANIMATION_ENDPOINT_CONTROLS_MARGIN_Y +
-            ((controlScale - 1f).coerceAtLeast(0f) * ANIMATION_ENDPOINT_CONTROLS_SCALE_MARGIN_Y)
-        return Vector3(
-            endpoint.transform.px,
-            endpoint.transform.py - yOffset,
-            endpoint.transform.pz + ANIMATION_ENDPOINT_BADGE_Z_OFFSET,
-        )
-    }
-
-    fun animationEndpointControlsScale(start: Boolean): Float? {
-        val endpoint = vm.animationDraftEndpoints.firstOrNull {
-            it.role == if (start) AnimationEndpointRole.START else AnimationEndpointRole.END
-        } ?: return null
-        return selectionToolbarScaleFor(endpoint.transform)
-    }
-
     private fun toolbarAnchorTransform(objectId: String): TransformData? {
         if (vm.groupMemberIds(objectId).size > 1) {
             selectedGroupBounds()?.center?.let { center ->
@@ -406,6 +404,9 @@ class SceneController(
             ?: currentAnimationTransforms[objectId]
             ?: vm.currentPage.states[objectId]?.transform?.let { visibleTransformFor(objectId, it) }
     }
+
+    internal fun viewPointInWorkspace(point: Vector3, space: ViewCoordinateSpace): Vector3 =
+        content.convertPosition(point, space, workspaceRoot)
 
     fun objectIdFor(entity: Entity?): String? {
         var current = entity
@@ -3471,8 +3472,6 @@ private const val ANIMATION_ENDPOINT_BADGE_HEIGHT = 0.082f
 private const val ANIMATION_ENDPOINT_BADGE_DEPTH = 0.018f
 private const val ANIMATION_ENDPOINT_BADGE_TEXT_SCALE = 0.36f
 private const val ANIMATION_ENDPOINT_BADGE_TEXT_Z = 0.014f
-private const val ANIMATION_ENDPOINT_CONTROLS_MARGIN_Y = 0.06f
-private const val ANIMATION_ENDPOINT_CONTROLS_SCALE_MARGIN_Y = 0.08f
 private const val ANIMATION_PATH_DASH_COUNT = 18
 private const val ANIMATION_PATH_DASH_SPACING = 0.08f
 private const val ANIMATION_PATH_DASH_FILL = 0.54f

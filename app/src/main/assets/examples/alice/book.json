@@ -1,0 +1,2013 @@
+{
+ "schemaVersion": 10,
+ "id": "alice_in_wonderland",
+ "name": "爱丽丝梦游仙境",
+ "documentType": "PRESENTATION",
+ "anchorEnabled": false,
+ "objects": [
+  {
+   "id": "bank",
+   "type": "MODEL",
+   "source": "bank-stage.glb",
+   "displayName": "柳树根下的河岸",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "alice",
+   "type": "MODEL",
+   "source": "alice.glb",
+   "displayName": "爱丽丝",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": true
+  },
+  {
+   "id": "rabbit",
+   "type": "MODEL",
+   "source": "rabbit.glb",
+   "displayName": "白兔",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": true
+  },
+  {
+   "id": "watch",
+   "type": "MODEL",
+   "source": "watch.glb",
+   "displayName": "怀表",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "alice_01_title",
+   "type": "TEXT",
+   "source": "兔子也会迟到？",
+   "displayName": "兔子也会迟到？",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "alice_01_copy",
+   "type": "TEXT",
+   "source": "爱丽丝正要打个盹，草丛里传来滴答声。一只白兔掏出金表，急得两只长耳朵一抖：“要迟到了！”",
+   "displayName": "爱丽丝正要打个盹，草丛里传来滴答声。一只白兔掏出金表，急得两只长耳朵一抖：“要迟到了！”",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "alice_02_title",
+   "type": "TEXT",
+   "source": "树根底下的门",
+   "displayName": "树根底下的门",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "alice_02_copy",
+   "type": "TEXT",
+   "source": "白兔在柳树根前一闪，金表也跟着不见了。爱丽丝弯腰往洞里看。“等一等！你的表究竟在赶什么？”",
+   "displayName": "白兔在柳树根前一闪，金表也跟着不见了。爱丽丝弯腰往洞里看。“等一等！你的表究竟在赶什么？”",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "burrow",
+   "type": "MODEL",
+   "source": "burrow-stage.glb",
+   "displayName": "树根书架与旧柜",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "cup",
+   "type": "MODEL",
+   "source": "cup.glb",
+   "displayName": "茶杯",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "alice_03_title",
+   "type": "TEXT",
+   "source": "掉了好一会儿",
+   "displayName": "掉了好一会儿",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "alice_03_copy",
+   "type": "TEXT",
+   "source": "洞里居然有书架。爱丽丝慢慢往下落，经过一本红皮书时，还来得及读完它的书名。",
+   "displayName": "洞里居然有书架。爱丽丝慢慢往下落，经过一本红皮书时，还来得及读完它的书名。",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "alice_04_title",
+   "type": "TEXT",
+   "source": "请把杯子放好",
+   "displayName": "请把杯子放好",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "alice_04_copy",
+   "type": "TEXT",
+   "source": "一只茶杯从架边滑下来。爱丽丝轻轻一托，把它送回矮架。她的鞋底这才碰到地板。远处又响起了滴答声。",
+   "displayName": "一只茶杯从架边滑下来。爱丽丝轻轻一托，把它送回矮架。她的鞋底这才碰到地板。远处又响起了滴答声。",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "hall",
+   "type": "MODEL",
+   "source": "hall-stage.glb",
+   "displayName": "钥匙大厅与矮门",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "key",
+   "type": "MODEL",
+   "source": "key.glb",
+   "displayName": "金钥匙",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "alice_05_title",
+   "type": "TEXT",
+   "source": "钥匙太小，门也太小",
+   "displayName": "钥匙太小，门也太小",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "alice_05_copy",
+   "type": "TEXT",
+   "source": "圆桌上躺着一把金钥匙。爱丽丝试遍了大门，最后才发现，墙脚还有一扇只到膝盖的小门。",
+   "displayName": "圆桌上躺着一把金钥匙。爱丽丝试遍了大门，最后才发现，墙脚还有一扇只到膝盖的小门。",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "alice_06_title",
+   "type": "TEXT",
+   "source": "这回，谁太小？",
+   "displayName": "这回，谁太小？",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "alice_06_copy",
+   "type": "TEXT",
+   "source": "一口药水下去，小门刚好合身，钥匙却留在高高的桌上。白兔从桌边擦过，把钥匙碰了下来。叮！",
+   "displayName": "一口药水下去，小门刚好合身，钥匙却留在高高的桌上。白兔从桌边擦过，把钥匙碰了下来。叮！",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "tea",
+   "type": "MODEL",
+   "source": "tea-stage.glb",
+   "displayName": "茶桌与瓷壶",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "alice_07_title",
+   "type": "TEXT",
+   "source": "明明还有椅子",
+   "displayName": "明明还有椅子",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "alice_07_copy",
+   "type": "TEXT",
+   "source": "桌上摆了四只茶杯，客人却只有半顶帽子。“没位子啦！”茶壶后面传来声音。爱丽丝拉近自己的杯子：“那我站一会儿。”",
+   "displayName": "桌上摆了四只茶杯，客人却只有半顶帽子。“没位子啦！”茶壶后面传来声音。爱丽丝拉近自己的杯子：“那我站一会儿。”",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "mouse",
+   "type": "MODEL",
+   "source": "mouse.glb",
+   "displayName": "睡鼠",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": true
+  },
+  {
+   "id": "alice_08_title",
+   "type": "TEXT",
+   "source": "六点钟的证人",
+   "displayName": "六点钟的证人",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "alice_08_copy",
+   "type": "TEXT",
+   "source": "睡鼠从壶后露出脑袋：“一直都是六点，当然要一直喝茶。”桌底闪过白耳朵。爱丽丝这才发现，滴答声根本没停。",
+   "displayName": "睡鼠从壶后露出脑袋：“一直都是六点，当然要一直喝茶。”桌底闪过白耳朵。爱丽丝这才发现，滴答声根本没停。",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "hedge",
+   "type": "MODEL",
+   "source": "hedge-stage.glb",
+   "displayName": "红白玫瑰园",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "guard",
+   "type": "MODEL",
+   "source": "guard.glb",
+   "displayName": "纸牌园丁",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": true
+  },
+  {
+   "id": "guard__2",
+   "type": "MODEL",
+   "source": "guard.glb",
+   "displayName": "纸牌园丁",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "guard__3",
+   "type": "MODEL",
+   "source": "guard.glb",
+   "displayName": "纸牌园丁",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "white_rose",
+   "type": "MODEL",
+   "source": "white_rose.glb",
+   "displayName": "白玫瑰",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "brush",
+   "type": "MODEL",
+   "source": "brush.glb",
+   "displayName": "油漆刷",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "alice_09_title",
+   "type": "TEXT",
+   "source": "还差最后一朵",
+   "displayName": "还差最后一朵",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "alice_09_copy",
+   "type": "TEXT",
+   "source": "三张纸牌正把白花漆成红花。最矮的园丁踮起脚，还是差一朵。他一手握着刷子，一手摊向爱丽丝：“请帮帮忙！”",
+   "displayName": "三张纸牌正把白花漆成红花。最矮的园丁踮起脚，还是差一朵。他一手握着刷子，一手摊向爱丽丝：“请帮帮忙！”",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "queen",
+   "type": "MODEL",
+   "source": "queen.glb",
+   "displayName": "红心王后",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": true
+  },
+  {
+   "id": "red_rose",
+   "type": "MODEL",
+   "source": "red_rose.glb",
+   "displayName": "半干的红玫瑰",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "alice_10_title",
+   "type": "TEXT",
+   "source": "谁偷走了红色？",
+   "displayName": "谁偷走了红色？",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "alice_10_copy",
+   "type": "TEXT",
+   "source": "“谁把我的白手套染红了？”王后举起手，大家都藏起刷子。爱丽丝看着那朵刚变红的花，跟着他们走进法庭。",
+   "displayName": "“谁把我的白手套染红了？”王后举起手，大家都藏起刷子。爱丽丝看着那朵刚变红的花，跟着他们走进法庭。",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "court",
+   "type": "MODEL",
+   "source": "court-stage.glb",
+   "displayName": "王后的长案",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "flying_card__0",
+   "type": "MODEL",
+   "source": "flying_card.glb",
+   "displayName": "红心纸牌",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "flying_card__1",
+   "type": "MODEL",
+   "source": "flying_card.glb",
+   "displayName": "红心纸牌",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "flying_card__2",
+   "type": "MODEL",
+   "source": "flying_card.glb",
+   "displayName": "红心纸牌",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "flying_card__3",
+   "type": "MODEL",
+   "source": "flying_card.glb",
+   "displayName": "红心纸牌",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "flying_card__4",
+   "type": "MODEL",
+   "source": "flying_card.glb",
+   "displayName": "红心纸牌",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "alice_11_title",
+   "type": "TEXT",
+   "source": "“你们不过是一副牌！”",
+   "displayName": "“你们不过是一副牌！”",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "alice_11_copy",
+   "type": "TEXT",
+   "source": "王后把染红的手套一挥，纸牌兵齐刷刷跳了起来。爱丽丝忽然笑了：“我知道你们是什么了！”五张红心悬在她头顶。",
+   "displayName": "王后把染红的手套一挥，纸牌兵齐刷刷跳了起来。爱丽丝忽然笑了：“我知道你们是什么了！”五张红心悬在她头顶。",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "fall_leaf__0",
+   "type": "MODEL",
+   "source": "fall_leaf.glb",
+   "displayName": "河岸的落叶",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "fall_leaf__1",
+   "type": "MODEL",
+   "source": "fall_leaf.glb",
+   "displayName": "河岸的落叶",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "fall_leaf__2",
+   "type": "MODEL",
+   "source": "fall_leaf.glb",
+   "displayName": "河岸的落叶",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "fall_leaf__3",
+   "type": "MODEL",
+   "source": "fall_leaf.glb",
+   "displayName": "河岸的落叶",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "fall_leaf__4",
+   "type": "MODEL",
+   "source": "fall_leaf.glb",
+   "displayName": "河岸的落叶",
+   "modelOriginMode": "SHARED_ORIGIN",
+   "locked": true,
+   "playEmbeddedAnimation": false
+  },
+  {
+   "id": "alice_12_title",
+   "type": "TEXT",
+   "source": "落在裙边的红心",
+   "displayName": "落在裙边的红心",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  },
+  {
+   "id": "alice_12_copy",
+   "type": "TEXT",
+   "source": "第一张牌轻得像一片叶子。第二张也是。爱丽丝睁开眼，河水还在流，几片柳叶正落在裙边。草丛里，谁的表又响了一下？",
+   "displayName": "第一张牌轻得像一片叶子。第二张也是。爱丽丝睁开眼，河水还在流，几片柳叶正落在裙边。草丛里，谁的表又响了一下？",
+   "locked": true,
+   "faceViewer": true,
+   "textBackgroundEnabled": true,
+   "textColor": 4294963928
+  }
+ ],
+ "pages": [
+  {
+   "id": "alice_01",
+   "states": [
+    {
+     "objectId": "bank",
+     "visible": true,
+     "transform": {
+      "px": -0.59,
+      "py": 0.81,
+      "pz": -2.82,
+      "scale": 0.46,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice",
+     "visible": true,
+     "transform": {
+      "px": -0.8614,
+      "py": 0.8155,
+      "pz": -2.6728,
+      "scale": 0.5428,
+      "rotationY": 0.13
+     }
+    },
+    {
+     "objectId": "rabbit",
+     "visible": true,
+     "transform": {
+      "px": -0.2818,
+      "py": 0.8109,
+      "pz": -2.5118,
+      "scale": 0.46,
+      "rotationY": -0.2
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.544,
+       "py": 0.8095,
+       "pz": -2.498,
+       "scale": 0.414,
+       "rotationY": -0.2
+      },
+      "end": {
+       "px": -0.2818,
+       "py": 0.8109,
+       "pz": -2.5118,
+       "scale": 0.46,
+       "rotationY": -0.2
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "watch",
+     "visible": true,
+     "transform": {
+      "px": -0.1703,
+      "py": 0.8799,
+      "pz": -2.4596,
+      "scale": 0.1656,
+      "rotationY": -0.2
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.4437,
+       "py": 0.8716,
+       "pz": -2.4511,
+       "scale": 0.14904,
+       "rotationY": -0.2
+      },
+      "end": {
+       "px": -0.1703,
+       "py": 0.8799,
+       "pz": -2.4596,
+       "scale": 0.1656,
+       "rotationY": -0.2
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "alice_01_title",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.77,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 1.05
+     }
+    },
+    {
+     "objectId": "alice_01_copy",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.39,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 0.93
+     }
+    }
+   ],
+   "annotations": [],
+   "skybox": {
+    "source": "bank.jpg",
+    "displayName": "河岸全景",
+    "rotationY": 0
+   }
+  },
+  {
+   "id": "alice_02",
+   "states": [
+    {
+     "objectId": "bank",
+     "visible": true,
+     "transform": {
+      "px": -0.59,
+      "py": 0.81,
+      "pz": -2.82,
+      "scale": 0.46,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice",
+     "visible": true,
+     "transform": {
+      "px": -0.2864,
+      "py": 0.8109,
+      "pz": -2.4888,
+      "scale": 0.529,
+      "rotationY": 0.51
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.8614,
+       "py": 0.8155,
+       "pz": -2.6728,
+       "scale": 0.5428,
+       "rotationY": 0.13
+      },
+      "end": {
+       "px": -0.2864,
+       "py": 0.8109,
+       "pz": -2.4888,
+       "scale": 0.529,
+       "rotationY": 0.51
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "rabbit",
+     "visible": true,
+     "transform": {
+      "px": 0.008,
+      "py": 0.8132,
+      "pz": -2.4842,
+      "scale": 0.1518,
+      "rotationY": 0.84
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.2818,
+       "py": 0.8109,
+       "pz": -2.5118,
+       "scale": 0.46,
+       "rotationY": -0.2
+      },
+      "end": {
+       "px": 0.008,
+       "py": 0.8132,
+       "pz": -2.4842,
+       "scale": 0.1518,
+       "rotationY": 0.84
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "watch",
+     "visible": true,
+     "transform": {
+      "px": 0.0415,
+      "py": 0.836,
+      "pz": -2.5072,
+      "scale": 0.05465,
+      "rotationY": 0.84
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.1703,
+       "py": 0.8799,
+       "pz": -2.4596,
+       "scale": 0.1656,
+       "rotationY": -0.2
+      },
+      "end": {
+       "px": 0.0415,
+       "py": 0.836,
+       "pz": -2.5072,
+       "scale": 0.05465,
+       "rotationY": 0.84
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "alice_02_title",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.77,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 1.05
+     }
+    },
+    {
+     "objectId": "alice_02_copy",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.39,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 0.93
+     }
+    }
+   ],
+   "annotations": [],
+   "skybox": {
+    "source": "bank.jpg",
+    "displayName": "河岸全景",
+    "rotationY": 0
+   }
+  },
+  {
+   "id": "alice_03",
+   "states": [
+    {
+     "objectId": "burrow",
+     "visible": true,
+     "transform": {
+      "px": -0.59,
+      "py": 0.81,
+      "pz": -2.82,
+      "scale": 0.46,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice",
+     "visible": true,
+     "transform": {
+      "px": -0.6452,
+      "py": 0.9526,
+      "pz": -2.6728,
+      "scale": 0.3956,
+      "rotationY": -0.14
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.6452,
+       "py": 1.431,
+       "pz": -2.6728,
+       "scale": 0.3956,
+       "rotationY": -0.14
+      },
+      "end": {
+       "px": -0.6452,
+       "py": 0.9526,
+       "pz": -2.6728,
+       "scale": 0.3956,
+       "rotationY": -0.14
+      },
+      "durationSeconds": 4,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "cup",
+     "visible": true,
+     "transform": {
+      "px": -0.2726,
+      "py": 1.293,
+      "pz": -2.4934,
+      "scale": 0.5152,
+      "rotationY": 0.12
+     }
+    },
+    {
+     "objectId": "alice_03_title",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.77,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 1.05
+     }
+    },
+    {
+     "objectId": "alice_03_copy",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.39,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 0.93
+     }
+    }
+   ],
+   "annotations": [],
+   "skybox": {
+    "source": "burrow.jpg",
+    "displayName": "兔子洞全景",
+    "rotationY": 0
+   }
+  },
+  {
+   "id": "alice_04",
+   "states": [
+    {
+     "objectId": "burrow",
+     "visible": true,
+     "transform": {
+      "px": -0.59,
+      "py": 0.81,
+      "pz": -2.82,
+      "scale": 0.46,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice",
+     "visible": true,
+     "transform": {
+      "px": -0.7648,
+      "py": 0.81,
+      "pz": -2.6636,
+      "scale": 0.4692,
+      "rotationY": 0.26
+     }
+    },
+    {
+     "objectId": "cup",
+     "visible": true,
+     "transform": {
+      "px": 0.2058,
+      "py": 1.1366,
+      "pz": -2.6912,
+      "scale": 0.3496,
+      "rotationY": 0
+     },
+     "pageAnimation": {
+      "start": {
+       "px": 0.1552,
+       "py": 1.362,
+       "pz": -2.3784,
+       "scale": 0.3496,
+       "rotationY": 0
+      },
+      "end": {
+       "px": 0.2058,
+       "py": 1.1366,
+       "pz": -2.6912,
+       "scale": 0.3496,
+       "rotationY": 0
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "watch",
+     "visible": true,
+     "transform": {
+      "px": -0.2726,
+      "py": 0.8468,
+      "pz": -2.7372,
+      "scale": 0.276,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice_04_title",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.77,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 1.05
+     }
+    },
+    {
+     "objectId": "alice_04_copy",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.39,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 0.93
+     }
+    }
+   ],
+   "annotations": [],
+   "skybox": {
+    "source": "burrow.jpg",
+    "displayName": "兔子洞全景",
+    "rotationY": 0
+   }
+  },
+  {
+   "id": "alice_05",
+   "states": [
+    {
+     "objectId": "hall",
+     "visible": true,
+     "transform": {
+      "px": -0.59,
+      "py": 0.81,
+      "pz": -2.82,
+      "scale": 0.46,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice",
+     "visible": true,
+     "transform": {
+      "px": -0.36,
+      "py": 0.81,
+      "pz": -2.6774,
+      "scale": 0.5198,
+      "rotationY": 0.2
+     }
+    },
+    {
+     "objectId": "key",
+     "visible": true,
+     "transform": {
+      "px": -1.1788,
+      "py": 1.1311,
+      "pz": -2.6636,
+      "scale": 0.3496,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice_05_title",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.77,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 1.05
+     }
+    },
+    {
+     "objectId": "alice_05_copy",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.39,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 0.93
+     }
+    }
+   ],
+   "annotations": [],
+   "skybox": {
+    "source": "hall.jpg",
+    "displayName": "钥匙大厅全景",
+    "rotationY": 0
+   }
+  },
+  {
+   "id": "alice_06",
+   "states": [
+    {
+     "objectId": "hall",
+     "visible": true,
+     "transform": {
+      "px": -0.59,
+      "py": 0.81,
+      "pz": -2.82,
+      "scale": 0.46,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice",
+     "visible": true,
+     "transform": {
+      "px": -0.36,
+      "py": 0.81,
+      "pz": -2.6774,
+      "scale": 0.2162,
+      "rotationY": 0.2
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.36,
+       "py": 0.81,
+       "pz": -2.6774,
+       "scale": 0.5198,
+       "rotationY": 0.2
+      },
+      "end": {
+       "px": -0.36,
+       "py": 0.81,
+       "pz": -2.6774,
+       "scale": 0.2162,
+       "rotationY": 0.2
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "key",
+     "visible": true,
+     "transform": {
+      "px": -0.3186,
+      "py": 0.8164,
+      "pz": -2.4566,
+      "scale": 0.3496,
+      "rotationY": -0.5
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -1.1788,
+       "py": 1.1311,
+       "pz": -2.6636,
+       "scale": 0.3496,
+       "rotationY": 0
+      },
+      "end": {
+       "px": -0.3186,
+       "py": 0.8164,
+       "pz": -2.4566,
+       "scale": 0.3496,
+       "rotationY": -0.5
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "rabbit",
+     "visible": true,
+     "transform": {
+      "px": -1.4134,
+      "py": 1.126,
+      "pz": -2.774,
+      "scale": 0.2438,
+      "rotationY": -0.2
+     }
+    },
+    {
+     "objectId": "alice_06_title",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.77,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 1.05
+     }
+    },
+    {
+     "objectId": "alice_06_copy",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.39,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 0.93
+     }
+    }
+   ],
+   "annotations": [],
+   "skybox": {
+    "source": "hall.jpg",
+    "displayName": "钥匙大厅全景",
+    "rotationY": 0
+   }
+  },
+  {
+   "id": "alice_07",
+   "states": [
+    {
+     "objectId": "tea",
+     "visible": true,
+     "transform": {
+      "px": -0.59,
+      "py": 0.81,
+      "pz": -2.82,
+      "scale": 0.46,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice",
+     "visible": true,
+     "transform": {
+      "px": -1.5468,
+      "py": 0.8141,
+      "pz": -2.4612,
+      "scale": 0.4968,
+      "rotationY": 0.36
+     }
+    },
+    {
+     "objectId": "cup",
+     "visible": true,
+     "transform": {
+      "px": -1.119,
+      "py": 1.0791,
+      "pz": -2.7372,
+      "scale": 0.391,
+      "rotationY": 0
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.9442,
+       "py": 1.0796,
+       "pz": -2.7832,
+       "scale": 0.391,
+       "rotationY": 0
+      },
+      "end": {
+       "px": -1.119,
+       "py": 1.0791,
+       "pz": -2.7372,
+       "scale": 0.391,
+       "rotationY": 0
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "alice_07_title",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.77,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 1.05
+     }
+    },
+    {
+     "objectId": "alice_07_copy",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.39,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 0.93
+     }
+    }
+   ],
+   "annotations": [],
+   "skybox": {
+    "source": "tea.jpg",
+    "displayName": "疯茶会全景",
+    "rotationY": 0
+   }
+  },
+  {
+   "id": "alice_08",
+   "states": [
+    {
+     "objectId": "tea",
+     "visible": true,
+     "transform": {
+      "px": -0.59,
+      "py": 0.81,
+      "pz": -2.82,
+      "scale": 0.46,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice",
+     "visible": true,
+     "transform": {
+      "px": -1.5468,
+      "py": 0.8141,
+      "pz": -2.4612,
+      "scale": 0.4968,
+      "rotationY": 0.36
+     }
+    },
+    {
+     "objectId": "mouse",
+     "visible": true,
+     "transform": {
+      "px": -0.2404,
+      "py": 1.0796,
+      "pz": -2.7579,
+      "scale": 0.3864,
+      "rotationY": 0
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.36,
+       "py": 1.0796,
+       "pz": -2.7901,
+       "scale": 0.3864,
+       "rotationY": 0
+      },
+      "end": {
+       "px": -0.2404,
+       "py": 1.0796,
+       "pz": -2.7579,
+       "scale": 0.3864,
+       "rotationY": 0
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "rabbit",
+     "visible": true,
+     "transform": {
+      "px": -0.0196,
+      "py": 0.8063,
+      "pz": -2.429,
+      "scale": 0.2392,
+      "rotationY": 0.93
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.935,
+       "py": 0.8017,
+       "pz": -2.429,
+       "scale": 0.2392,
+       "rotationY": 0.93
+      },
+      "end": {
+       "px": -0.0196,
+       "py": 0.8063,
+       "pz": -2.429,
+       "scale": 0.2392,
+       "rotationY": 0.93
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "watch",
+     "visible": true,
+     "transform": {
+      "px": 0.0297,
+      "py": 0.8422,
+      "pz": -2.4698,
+      "scale": 0.08611,
+      "rotationY": 0.93
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.8857,
+       "py": 0.8376,
+       "pz": -2.4698,
+       "scale": 0.08611,
+       "rotationY": 0.93
+      },
+      "end": {
+       "px": 0.0297,
+       "py": 0.8422,
+       "pz": -2.4698,
+       "scale": 0.08611,
+       "rotationY": 0.93
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "cup",
+     "visible": true,
+     "transform": {
+      "px": -1.119,
+      "py": 1.0791,
+      "pz": -2.7372,
+      "scale": 0.391,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice_08_title",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.77,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 1.05
+     }
+    },
+    {
+     "objectId": "alice_08_copy",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.39,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 0.93
+     }
+    }
+   ],
+   "annotations": [],
+   "skybox": {
+    "source": "tea.jpg",
+    "displayName": "疯茶会全景",
+    "rotationY": 0
+   }
+  },
+  {
+   "id": "alice_09",
+   "states": [
+    {
+     "objectId": "hedge",
+     "visible": true,
+     "transform": {
+      "px": -0.59,
+      "py": 0.81,
+      "pz": -2.82,
+      "scale": 0.46,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice",
+     "visible": true,
+     "transform": {
+      "px": -0.8614,
+      "py": 0.8652,
+      "pz": -2.6222,
+      "scale": 0.4968,
+      "rotationY": 0.18
+     }
+    },
+    {
+     "objectId": "guard__2",
+     "visible": true,
+     "transform": {
+      "px": -0.3692,
+      "py": 0.7967,
+      "pz": -2.4704,
+      "scale": 0.483,
+      "rotationY": -0.19
+     }
+    },
+    {
+     "objectId": "guard",
+     "visible": true,
+     "transform": {
+      "px": -1.211,
+      "py": 0.798,
+      "pz": -2.4704,
+      "scale": 0.3588,
+      "rotationY": 0.15
+     }
+    },
+    {
+     "objectId": "guard__3",
+     "visible": true,
+     "transform": {
+      "px": 0.215,
+      "py": 0.7962,
+      "pz": -2.4704,
+      "scale": 0.368,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "white_rose",
+     "visible": true,
+     "transform": {
+      "px": -0.176,
+      "py": 0.8509,
+      "pz": -2.5808,
+      "scale": 0.6578,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "brush",
+     "visible": true,
+     "transform": {
+      "px": -1.3506,
+      "py": 0.8417,
+      "pz": -2.4199,
+      "scale": 0.30820000000000003,
+      "rotationY": 0.15
+     }
+    },
+    {
+     "objectId": "alice_09_title",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.77,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 1.05
+     }
+    },
+    {
+     "objectId": "alice_09_copy",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.39,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 0.93
+     }
+    }
+   ],
+   "annotations": [],
+   "skybox": {
+    "source": "hedge.jpg",
+    "displayName": "玫瑰园全景",
+    "rotationY": 0
+   }
+  },
+  {
+   "id": "alice_10",
+   "states": [
+    {
+     "objectId": "hedge",
+     "visible": true,
+     "transform": {
+      "px": -0.59,
+      "py": 0.81,
+      "pz": -2.82,
+      "scale": 0.46,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice",
+     "visible": true,
+     "transform": {
+      "px": -0.8614,
+      "py": 0.8652,
+      "pz": -2.6222,
+      "scale": 0.4968,
+      "rotationY": 0.18
+     }
+    },
+    {
+     "objectId": "guard__2",
+     "visible": true,
+     "transform": {
+      "px": -0.3692,
+      "py": 0.7967,
+      "pz": -2.4704,
+      "scale": 0.483,
+      "rotationY": -0.19
+     }
+    },
+    {
+     "objectId": "guard",
+     "visible": true,
+     "transform": {
+      "px": -1.211,
+      "py": 0.798,
+      "pz": -2.4704,
+      "scale": 0.3588,
+      "rotationY": 0.15
+     }
+    },
+    {
+     "objectId": "queen",
+     "visible": true,
+     "transform": {
+      "px": 0.0954,
+      "py": 0.798,
+      "pz": -2.452,
+      "scale": 0.5197999999999999,
+      "rotationY": 0
+     },
+     "pageAnimation": {
+      "start": {
+       "px": 0.169,
+       "py": 0.7976,
+       "pz": -2.4428,
+       "scale": 0.5197999999999999,
+       "rotationY": 0
+      },
+      "end": {
+       "px": 0.0954,
+       "py": 0.798,
+       "pz": -2.452,
+       "scale": 0.5197999999999999,
+       "rotationY": 0
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "red_rose",
+     "visible": true,
+     "transform": {
+      "px": -0.176,
+      "py": 0.8509,
+      "pz": -2.5808,
+      "scale": 0.6578,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice_10_title",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.77,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 1.05
+     }
+    },
+    {
+     "objectId": "alice_10_copy",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.39,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 0.93
+     }
+    }
+   ],
+   "annotations": [],
+   "skybox": {
+    "source": "hedge.jpg",
+    "displayName": "玫瑰园全景",
+    "rotationY": 0
+   }
+  },
+  {
+   "id": "alice_11",
+   "states": [
+    {
+     "objectId": "court",
+     "visible": true,
+     "transform": {
+      "px": -0.59,
+      "py": 0.81,
+      "pz": -2.82,
+      "scale": 0.46,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice",
+     "visible": true,
+     "transform": {
+      "px": -0.889,
+      "py": 0.8091,
+      "pz": -2.5762,
+      "scale": 0.5244,
+      "rotationY": 0.16
+     }
+    },
+    {
+     "objectId": "queen",
+     "visible": true,
+     "transform": {
+      "px": -0.1714,
+      "py": 1.1785,
+      "pz": -3.004,
+      "scale": 0.5152,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "flying_card__0",
+     "visible": true,
+     "transform": {
+      "px": -1.3444,
+      "py": 1.4264,
+      "pz": -2.6682,
+      "scale": 0.322,
+      "rotationY": -0.46
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.567,
+       "py": 1.1182,
+       "pz": -2.7648,
+       "scale": 0.322,
+       "rotationY": 0
+      },
+      "end": {
+       "px": -1.3444,
+       "py": 1.4264,
+       "pz": -2.6682,
+       "scale": 0.322,
+       "rotationY": -0.46
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "flying_card__1",
+     "visible": true,
+     "transform": {
+      "px": -0.9994,
+      "py": 1.5276,
+      "pz": -2.6682,
+      "scale": 0.322,
+      "rotationY": -0.23
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.4198,
+       "py": 1.1343,
+       "pz": -2.7648,
+       "scale": 0.322,
+       "rotationY": 0
+      },
+      "end": {
+       "px": -0.9994,
+       "py": 1.5276,
+       "pz": -2.6682,
+       "scale": 0.322,
+       "rotationY": -0.23
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "flying_card__2",
+     "visible": true,
+     "transform": {
+      "px": -0.6038,
+      "py": 1.5874,
+      "pz": -2.6682,
+      "scale": 0.322,
+      "rotationY": 0.0
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.2726,
+       "py": 1.1504,
+       "pz": -2.7648,
+       "scale": 0.322,
+       "rotationY": 0
+      },
+      "end": {
+       "px": -0.6038,
+       "py": 1.5874,
+       "pz": -2.6682,
+       "scale": 0.322,
+       "rotationY": 0.0
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "flying_card__3",
+     "visible": true,
+     "transform": {
+      "px": -0.2772,
+      "py": 1.5276,
+      "pz": -2.6682,
+      "scale": 0.322,
+      "rotationY": 0.23
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.1254,
+       "py": 1.1665,
+       "pz": -2.7648,
+       "scale": 0.322,
+       "rotationY": 0
+      },
+      "end": {
+       "px": -0.2772,
+       "py": 1.5276,
+       "pz": -2.6682,
+       "scale": 0.322,
+       "rotationY": 0.23
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "flying_card__4",
+     "visible": true,
+     "transform": {
+      "px": 0.0816,
+      "py": 1.408,
+      "pz": -2.6682,
+      "scale": 0.322,
+      "rotationY": 0.46
+     },
+     "pageAnimation": {
+      "start": {
+       "px": 0.0218,
+       "py": 1.1826,
+       "pz": -2.7648,
+       "scale": 0.322,
+       "rotationY": 0
+      },
+      "end": {
+       "px": 0.0816,
+       "py": 1.408,
+       "pz": -2.6682,
+       "scale": 0.322,
+       "rotationY": 0.46
+      },
+      "durationSeconds": 2,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "alice_11_title",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.77,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 1.05
+     }
+    },
+    {
+     "objectId": "alice_11_copy",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.39,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 0.93
+     }
+    }
+   ],
+   "annotations": [],
+   "skybox": {
+    "source": "court.jpg",
+    "displayName": "纸牌法庭全景",
+    "rotationY": 0
+   }
+  },
+  {
+   "id": "alice_12",
+   "states": [
+    {
+     "objectId": "bank",
+     "visible": true,
+     "transform": {
+      "px": -0.59,
+      "py": 0.81,
+      "pz": -2.82,
+      "scale": 0.46,
+      "rotationY": 0
+     }
+    },
+    {
+     "objectId": "alice",
+     "visible": true,
+     "transform": {
+      "px": -0.889,
+      "py": 0.8118,
+      "pz": -2.5762,
+      "scale": 0.5244,
+      "rotationY": 0.16
+     }
+    },
+    {
+     "objectId": "fall_leaf__0",
+     "visible": true,
+     "transform": {
+      "px": -1.2708,
+      "py": 0.8077,
+      "pz": -2.452,
+      "scale": 0.5152,
+      "rotationY": -0.46
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -1.3444,
+       "py": 1.4264,
+       "pz": -2.6682,
+       "scale": 0.5152,
+       "rotationY": -0.46
+      },
+      "end": {
+       "px": -1.2708,
+       "py": 0.8077,
+       "pz": -2.452,
+       "scale": 0.5152,
+       "rotationY": -0.46
+      },
+      "durationSeconds": 4,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "fall_leaf__1",
+     "visible": true,
+     "transform": {
+      "px": -1.0868,
+      "py": 0.8022,
+      "pz": -2.4106,
+      "scale": 0.5152,
+      "rotationY": -0.23
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -1.1282,
+       "py": 1.5276,
+       "pz": -2.6728,
+       "scale": 0.5152,
+       "rotationY": -0.23
+      },
+      "end": {
+       "px": -1.0868,
+       "py": 0.8022,
+       "pz": -2.4106,
+       "scale": 0.5152,
+       "rotationY": -0.23
+      },
+      "durationSeconds": 4,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "fall_leaf__2",
+     "visible": true,
+     "transform": {
+      "px": -0.6314,
+      "py": 0.8118,
+      "pz": -2.4428,
+      "scale": 0.5152,
+      "rotationY": 0.0
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.6038,
+       "py": 1.5874,
+       "pz": -2.6682,
+       "scale": 0.5152,
+       "rotationY": 0.0
+      },
+      "end": {
+       "px": -0.6314,
+       "py": 0.8118,
+       "pz": -2.4428,
+       "scale": 0.5152,
+       "rotationY": 0.0
+      },
+      "durationSeconds": 4,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "fall_leaf__3",
+     "visible": true,
+     "transform": {
+      "px": -0.3416,
+      "py": 0.8123,
+      "pz": -2.4888,
+      "scale": 0.5152,
+      "rotationY": 0.23
+     },
+     "pageAnimation": {
+      "start": {
+       "px": -0.2772,
+       "py": 1.5276,
+       "pz": -2.6682,
+       "scale": 0.5152,
+       "rotationY": 0.23
+      },
+      "end": {
+       "px": -0.3416,
+       "py": 0.8123,
+       "pz": -2.4888,
+       "scale": 0.5152,
+       "rotationY": 0.23
+      },
+      "durationSeconds": 4,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "fall_leaf__4",
+     "visible": true,
+     "transform": {
+      "px": -0.0932,
+      "py": 0.8137,
+      "pz": -2.4474,
+      "scale": 0.5152,
+      "rotationY": 0.46
+     },
+     "pageAnimation": {
+      "start": {
+       "px": 0.0816,
+       "py": 1.408,
+       "pz": -2.6682,
+       "scale": 0.5152,
+       "rotationY": 0.46
+      },
+      "end": {
+       "px": -0.0932,
+       "py": 0.8137,
+       "pz": -2.4474,
+       "scale": 0.5152,
+       "rotationY": 0.46
+      },
+      "durationSeconds": 4,
+      "easing": "EASE_IN_OUT",
+      "loopMode": "NONE"
+     }
+    },
+    {
+     "objectId": "alice_12_title",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.77,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 1.05
+     }
+    },
+    {
+     "objectId": "alice_12_copy",
+     "visible": true,
+     "transform": {
+      "px": 1.19,
+      "py": 1.39,
+      "pz": -2.48,
+      "rotationY": 0,
+      "scale": 0.93
+     }
+    }
+   ],
+   "annotations": [],
+   "skybox": {
+    "source": "bank.jpg",
+    "displayName": "河岸全景",
+    "rotationY": 0
+   }
+  }
+ ]
+}

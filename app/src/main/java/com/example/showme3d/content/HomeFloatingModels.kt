@@ -2,9 +2,14 @@ package com.example.showme3d.content
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.composed
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.Modifier
+import com.example.showme3d.studio.interaction.ModelGrabSession
+import com.example.showme3d.studio.interaction.modelGrabInput
+import com.pico.spatial.core.ecs.ViewCoordinateSpace
 import com.example.showme3d.studio.ui.PanelPosition
 import com.pico.spatial.core.container.SpatialViewContent
 import com.pico.spatial.core.ecs.CollisionComponent
@@ -17,10 +22,6 @@ import com.pico.spatial.core.ecs.resource.ShapeResource
 import com.pico.spatial.core.math.EulerAngles
 import com.pico.spatial.core.math.Quat
 import com.pico.spatial.core.math.Vector3
-import com.pico.spatial.ui.foundation.gesture.TargetEntity
-import com.pico.spatial.ui.foundation.gesture.detectSpatialDragGesture
-import com.pico.spatial.ui.foundation.gesture.detectSpatialPointerEvent
-import com.pico.spatial.ui.foundation.gesture.detectSpatialScaleGesture
 import kotlinx.coroutines.yield
 import kotlin.math.abs
 import kotlin.math.atan2
@@ -35,7 +36,8 @@ import kotlin.math.sqrt
  * 双手捏住模型即可同时移动、旋转和缩放；每次松手都会把最终 Transform 写到 logcat。
  * 用户验收布局后，再将日志中的数据回填为正式默认值，并开启浮动 / LookAt / 回位。
  */
-class HomeFloatingModels {
+class HomeFloatingModels(private val content: SpatialViewContent) {
+    internal var trackedGrab: TrackedHomeGrab? = null
     private val roots = linkedMapOf<String, Entity>()
     private val interactionSizes = mutableMapOf<String, Vector3>()
     private val animationControllers = mutableListOf<AnimationPlaybackController>()
@@ -51,7 +53,7 @@ class HomeFloatingModels {
     private var lastHomePosition: PanelPosition? = null
     private var lastDecorUpdateNanos = 0L
 
-    suspend fun load(content: SpatialViewContent) {
+    suspend fun load() {
         HomeFloatingModelSpecs.forEach { spec ->
             val root = Entity().apply { setName("home_float_${spec.id}") }
             val model = Entity.loadSuspend(spec.assetPath).apply { setName("home_float_${spec.id}_model") }
@@ -200,7 +202,7 @@ class HomeFloatingModels {
                 if (!motionUpdateDue) motionUpdateNanos.remove(spec.id)
             } else {
                 val currentScale = transform.scaleVector.x
-                if (currentScale < targetScale) {
+                if (appearing && currentScale < targetScale) {
                     val t = if (motionUpdateDue) {
                         elapsedLerpFactor(spec.id, nowNanos, APPEAR_LERP_PER_FRAME)
                     } else {
@@ -251,7 +253,7 @@ class HomeFloatingModels {
     fun currentTransform(id: String?): HomeFloatingTransform? {
         val root = entityFor(id) ?: return null
         val transform = root.components.get(TransformComponent::class.java) ?: return null
-        return HomeFloatingTransform(transform.position, transform.scaleVector.x)
+        return HomeFloatingTransform(transform.position, transform.scaleVector.x, yawDegrees[id] ?: 0f)
     }
 
     fun pushTransform(id: String?, next: HomeFloatingTransform) {
@@ -261,6 +263,7 @@ class HomeFloatingModels {
         manipulationUpdateNanos.remove(id)
         transform.setPosition(next.position)
         transform.setScaleVector(Vector3(next.scale))
+        applyYaw(requireNotNull(id), transform, next.yawDegrees)
         markUserInteraction(id)
     }
 
@@ -274,36 +277,12 @@ class HomeFloatingModels {
         pushTransform(id, next)
     }
 
-    fun nextDragTransform(current: HomeFloatingTransform, drag: Vector3): HomeFloatingTransform? {
-        if (abs(drag.x) > MAX_RAW_DRAG_DELTA || abs(drag.y) > MAX_RAW_DRAG_DELTA || abs(drag.z) > MAX_RAW_DRAG_DELTA) {
-            return null
-        }
-        val position = current.position
-        return current.copy(
-            position = Vector3(
-                position.x + (drag.x * DRAG_SENSITIVITY_XY).coerceIn(-MAX_DRAG_STEP_XY, MAX_DRAG_STEP_XY),
-                position.y + (-drag.y * DRAG_SENSITIVITY_XY).coerceIn(-MAX_DRAG_STEP_XY, MAX_DRAG_STEP_XY),
-                position.z + (drag.z * DRAG_SENSITIVITY_Z).coerceIn(-MAX_DRAG_STEP_Z, MAX_DRAG_STEP_Z),
-            )
-        )
-    }
+    internal fun viewPointInHome(point: Vector3, space: ViewCoordinateSpace): Vector3 =
+        content.convertPosition(point, space, content.localSpatialCoordinateSpace)
 
-    fun nextScaleTransform(current: HomeFloatingTransform, scaleFactor: Float): HomeFloatingTransform {
-        val factor = scaleFactor.coerceIn(
-            1f / MAX_SCALE_FACTOR_PER_EVENT,
-            MAX_SCALE_FACTOR_PER_EVENT,
-        )
-        return current.copy(scale = (current.scale * factor).coerceIn(MIN_SCALE, MAX_SCALE))
-    }
-
-    fun rotate(id: String?, deltaRadians: Float) {
-        val safeId = id ?: return
-        val root = roots[safeId] ?: return
-        val transform = root.components.get(TransformComponent::class.java) ?: return
-        val nextDegrees = (yawDegrees[safeId] ?: 0f) + Math.toDegrees(deltaRadians.toDouble()).toFloat()
-        yawDegrees[safeId] = nextDegrees
-        transform.setEulerAngles(EulerAngles(0f, nextDegrees, 0f))
-        markUserInteraction(safeId)
+    private fun applyYaw(id: String, transform: TransformComponent, yaw: Float) {
+        yawDegrees[id] = yaw
+        transform.setEulerAngles(EulerAngles(0f, yaw, 0f))
     }
 
     fun idFor(entity: Entity?): String? = rootFor(entity)?.let { root ->
@@ -317,22 +296,22 @@ class HomeFloatingModels {
      * root's local space so the test follows the same oriented box used by CollisionComponent,
      * including the model's current translation, rotation and scale.
      */
-    fun isViewerTargetingModel(viewerPosition: Vector3, viewerRotation: Quat): Boolean {
+    fun viewerTargetedModel(viewerPosition: Vector3, viewerRotation: Quat): String? {
         val forward = viewerRotation.rotateVector(HOME_GAZE_FORWARD)
-        if (!forward.isUsableDirection()) return false
+        if (!forward.isUsableDirection()) return null
         val worldDirection = forward.normalize()
         val worldRayEnd = viewerPosition + worldDirection
-        return roots.any { (id, root) ->
-            if (!root.enabled || visibleStates[id] != true) return@any false
+        return roots.entries.firstOrNull { (id, root) ->
+            if (!root.enabled || visibleStates[id] != true) return@firstOrNull false
             val localOrigin = runCatching { root.convertPositionFrom(viewerPosition, null) }.getOrNull()
                 ?.takeIf { it.isFiniteVector() }
-                ?: return@any false
+                ?: return@firstOrNull false
             val localRayEnd = runCatching { root.convertPositionFrom(worldRayEnd, null) }.getOrNull()
                 ?.takeIf { it.isFiniteVector() }
-                ?: return@any false
+                ?: return@firstOrNull false
             val localDirection = localRayEnd - localOrigin
-            if (!localDirection.isUsableDirection()) return@any false
-            val size = interactionSizes[id] ?: return@any false
+            if (!localDirection.isUsableDirection()) return@firstOrNull false
+            val size = interactionSizes[id] ?: return@firstOrNull false
             val scale = root.components.get(TransformComponent::class.java)
                 ?.scaleVector
                 ?.x
@@ -346,33 +325,7 @@ class HomeFloatingModels {
                 size.z * 0.5f + padding,
             )
             rayIntersectsCenteredBox(localOrigin, localDirection.normalize(), halfExtents)
-        }
-    }
-
-    fun rotationControlsPosition(id: String?): PanelPosition? {
-        val safeId = id ?: return null
-        val root = roots[safeId] ?: return null
-        val spec = HomeFloatingModelSpecsById[safeId] ?: return null
-        val transform = root.components.get(TransformComponent::class.java) ?: return null
-        val position = transform.position
-        val size = interactionSizes[safeId] ?: Vector3(spec.targetSizeMeters)
-        val toolbarScale = rotationControlsScale(id) ?: 1f
-        val belowModel = ((size.y * transform.scaleVector.x) / 2f) +
-            SELECTION_TOOLBAR_MARGIN_Y +
-            ((toolbarScale - 1f).coerceAtLeast(0f) * SELECTION_TOOLBAR_SCALE_MARGIN_Y)
-        return PanelPosition(
-            x = position.x,
-            y = position.y - belowModel,
-            z = position.z + SELECTION_TOOLBAR_Z_OFFSET,
-        )
-    }
-
-    fun rotationControlsScale(id: String?): Float? {
-        val position = currentTransform(id)?.position ?: return null
-        val distance = sqrt(position.x * position.x + position.z * position.z)
-        val normalized = ((distance - SELECTION_TOOLBAR_NEAR_DISTANCE) /
-            (SELECTION_TOOLBAR_FAR_DISTANCE - SELECTION_TOOLBAR_NEAR_DISTANCE)).coerceIn(0f, 1f)
-        return SELECTION_TOOLBAR_MIN_SCALE + (SELECTION_TOOLBAR_MAX_SCALE - SELECTION_TOOLBAR_MIN_SCALE) * normalized
+        }?.key
     }
 
     fun logCalibrationSnapshot() {
@@ -500,6 +453,7 @@ class HomeFloatingModels {
         )
         val currentScale = transform.scaleVector.x
         transform.setScaleVector(Vector3(currentScale + (target.scale - currentScale) * t))
+        applyYaw(id, transform, target.yawDegrees)
     }
 
     private fun recenterModelRootToActualBounds(
@@ -546,14 +500,6 @@ class HomeFloatingModels {
 
     companion object {
         private const val TAG = "HomeFloatingModels"
-        private const val DRAG_SENSITIVITY_XY = 0.00042f
-        private const val DRAG_SENSITIVITY_Z = 0.00028f
-        private const val MAX_DRAG_STEP_XY = 0.034f
-        private const val MAX_DRAG_STEP_Z = 0.032f
-        private const val MAX_RAW_DRAG_DELTA = 160f
-        private const val MIN_SCALE = 0.08f
-        private const val MAX_SCALE = 10f
-        private const val MAX_SCALE_FACTOR_PER_EVENT = 1.08f
         private const val MAX_ENTITY_PARENT_SEARCH_DEPTH = 32
         private const val RETURN_DELAY_NANOS = 3_000_000_000L
         private const val RETURN_LERP_PER_FRAME = 0.075f
@@ -567,13 +513,6 @@ class HomeFloatingModels {
         private const val SCALE_SETTLE_EPSILON = 0.002f
         private const val FLOAT_AMPLITUDE_METERS = 0.018f
         private const val FLOAT_SPEED = 1.15f
-        private const val SELECTION_TOOLBAR_MARGIN_Y = 0.18f
-        private const val SELECTION_TOOLBAR_SCALE_MARGIN_Y = 0.18f
-        private const val SELECTION_TOOLBAR_Z_OFFSET = 0.04f
-        private const val SELECTION_TOOLBAR_NEAR_DISTANCE = 0.75f
-        private const val SELECTION_TOOLBAR_FAR_DISTANCE = 3.6f
-        private const val SELECTION_TOOLBAR_MIN_SCALE = 1.1f
-        private const val SELECTION_TOOLBAR_MAX_SCALE = 2.1f
         private const val HOME_GAZE_HIT_PADDING_METERS = 0.035f
         private const val GAZE_DIRECTION_EPSILON = 0.0001f
         private const val GAZE_SCALE_EPSILON = 0.0001f
@@ -609,216 +548,49 @@ class HomeFloatingModels {
 data class HomeFloatingTransform(
     val position: Vector3,
     val scale: Float,
+    val yawDegrees: Float,
 )
-
-private class HomeFloatingGestureSession {
-    var id: String? = null
-    var base: HomeFloatingTransform? = null
-    var rollback: HomeFloatingTransform? = null
-    var latest: HomeFloatingTransform? = null
-
-    fun begin(id: String, transform: HomeFloatingTransform): Boolean {
-        this.id = id
-        base = transform
-        rollback = transform
-        latest = transform
-        return true
-    }
-
-    fun end(models: () -> HomeFloatingModels?, onManipulationActiveChanged: (Boolean) -> Unit, onModelChanged: () -> Unit) {
-        val result = latest ?: return
-        models()?.finishPreviewTransform(id, result)
-        models()?.logCalibrationSnapshot()
-        onManipulationActiveChanged(false)
-        onModelChanged()
-        clear()
-    }
-
-    fun cancel(models: () -> HomeFloatingModels?, onManipulationActiveChanged: (Boolean) -> Unit) {
-        val original = rollback ?: base
-        if (original != null) models()?.finishPreviewTransform(id, original)
-        onManipulationActiveChanged(false)
-        clear()
-    }
-
-    fun clear() {
-        id = null
-        base = null
-        rollback = null
-        latest = null
-    }
-}
-
-private enum class HomeFloatingGestureOwner {
-    DRAG,
-    SCALE,
-}
-
-private class HomeFloatingManipulationHandoffState {
-    private var owner: HomeFloatingGestureOwner? = null
-    private var id: String? = null
-    private var latest: HomeFloatingTransform? = null
-
-    fun latestFor(id: String): HomeFloatingTransform? =
-        latest.takeIf { this.id == id }
-
-    fun begin(owner: HomeFloatingGestureOwner, id: String, transform: HomeFloatingTransform) {
-        this.owner = owner
-        this.id = id
-        latest = transform
-    }
-
-    fun update(owner: HomeFloatingGestureOwner, id: String, transform: HomeFloatingTransform) {
-        if (this.id != null && this.id != id) return
-        begin(owner, id, transform)
-    }
-
-    fun clear(owner: HomeFloatingGestureOwner, id: String) {
-        if (this.owner != owner || this.id != id) return
-        this.owner = null
-        this.id = null
-        latest = null
-    }
-
-    fun isSuperseded(owner: HomeFloatingGestureOwner, id: String): Boolean =
-        this.id == id && this.owner != null && this.owner != owner
-}
 
 fun Modifier.homeFloatingModelManipulatable(
     context: Context,
     models: () -> HomeFloatingModels?,
-    onModelSelected: (String) -> Unit,
-    selectedModelId: () -> String?,
     onTargetPointerActiveChanged: (Boolean) -> Unit,
     onManipulationActiveChanged: (Boolean) -> Unit,
-    onModelChanged: () -> Unit,
-): Modifier =
-    composed {
-        val handoff = androidx.compose.runtime.remember { HomeFloatingManipulationHandoffState() }
-        this.pointerInput(models()) {
-            val activeTargetPointerIds = mutableSetOf<Any>()
-            var emittedActive = false
-
-            fun emitActive(next: Boolean) {
-                if (emittedActive == next) return
-                emittedActive = next
-                onTargetPointerActiveChanged(next)
-            }
-
-            try {
-                detectSpatialPointerEvent(
-                    context = context,
-                    targetedToEntity = TargetEntity.any { entity -> models()?.owns(entity) == true },
-                ) { events ->
-                    events.forEach { event ->
-                        if (event.pressed && models()?.owns(event.targetedEntity) == true) {
-                            activeTargetPointerIds.add(event.pointerId)
-                        } else {
-                            activeTargetPointerIds.remove(event.pointerId)
-                        }
-                    }
-                    emitActive(activeTargetPointerIds.isNotEmpty())
-                    false
-                }
-            } finally {
-                activeTargetPointerIds.clear()
-                emitActive(false)
-            }
-        }.pointerInput(models()) {
-            val session = HomeFloatingGestureSession()
-            detectSpatialDragGesture(
-                context,
-                TargetEntity.any { entity -> models()?.owns(entity) == true },
-                {},
-                {
-                    val id = session.id ?: return@detectSpatialDragGesture
-                    if (!handoff.isSuperseded(HomeFloatingGestureOwner.DRAG, id)) {
-                        session.end(models, onManipulationActiveChanged, onModelChanged)
-                        handoff.clear(HomeFloatingGestureOwner.DRAG, id)
-                    } else {
-                        session.clear()
-                    }
+): Modifier {
+    val controller = models() ?: return this
+    return composed {
+        val activity = rememberUpdatedState(onManipulationActiveChanged)
+        val session = remember(controller) {
+            ModelGrabSession(
+                read = { id -> controller.currentTransform(id)?.also { controller.previewTransform(id, it) } },
+                scaleOf = HomeFloatingTransform::scale,
+                transform = { pose, delta, scale, yaw ->
+                    HomeFloatingTransform(pose.position + delta, scale, pose.yawDegrees + Math.toDegrees(yaw.toDouble()).toFloat())
                 },
-                {
-                    val id = session.id ?: return@detectSpatialDragGesture
-                    if (!handoff.isSuperseded(HomeFloatingGestureOwner.DRAG, id)) {
-                        session.cancel(models, onManipulationActiveChanged)
-                        handoff.clear(HomeFloatingGestureOwner.DRAG, id)
-                    } else {
-                        session.clear()
-                    }
+                preview = controller::previewTransform,
+                release = { id, pose, cancelled ->
+                    controller.finishPreviewTransform(id, pose)
+                    if (!cancelled) controller.logCalibrationSnapshot()
                 },
-            ) { value ->
-                val controller = models() ?: return@detectSpatialDragGesture
-                val id = session.id ?: controller.idFor(value.targetEntity)
-                    ?.takeUnless { handoff.isSuperseded(HomeFloatingGestureOwner.DRAG, it) }
-                    ?.also { selectedId ->
-                        onModelSelected(selectedId)
-                        val start = handoff.latestFor(selectedId)
-                            ?: controller.currentTransform(selectedId)
-                            ?: return@detectSpatialDragGesture
-                        session.begin(selectedId, start)
-                        handoff.begin(HomeFloatingGestureOwner.DRAG, selectedId, start)
-                        controller.previewTransform(selectedId, start)
-                        onManipulationActiveChanged(true)
-                    }
-                    ?: return@detectSpatialDragGesture
-                if (handoff.isSuperseded(HomeFloatingGestureOwner.DRAG, id)) return@detectSpatialDragGesture
-                val current = session.latest ?: session.base ?: return@detectSpatialDragGesture
-                val next = controller.nextDragTransform(current, value.dragAmount.toVector3()) ?: return@detectSpatialDragGesture
-                session.latest = next
-                handoff.update(HomeFloatingGestureOwner.DRAG, id, next)
-                controller.previewTransform(id, next)
-            }
-        }.pointerInput(models(), selectedModelId()) {
-            val session = HomeFloatingGestureSession()
-            val selectedEntity = models()?.entityFor(selectedModelId()) ?: return@pointerInput
-            detectSpatialScaleGesture(
-                context,
-                TargetEntity.hit(selectedEntity),
-                {
-                    val controller = models() ?: return@detectSpatialScaleGesture
-                    val id = selectedModelId() ?: return@detectSpatialScaleGesture
-                    val start = handoff.latestFor(id)
-                        ?: controller.currentTransform(id)
-                        ?: return@detectSpatialScaleGesture
-                    session.begin(id, start)
-                    handoff.begin(HomeFloatingGestureOwner.SCALE, id, start)
-                    controller.previewTransform(id, start)
-                    onManipulationActiveChanged(true)
-                },
-                {
-                    val id = session.id ?: return@detectSpatialScaleGesture
-                    if (!handoff.isSuperseded(HomeFloatingGestureOwner.SCALE, id)) {
-                        session.end(models, onManipulationActiveChanged, onModelChanged)
-                        handoff.clear(HomeFloatingGestureOwner.SCALE, id)
-                    } else {
-                        session.clear()
-                    }
-                },
-                {
-                    val id = session.id ?: return@detectSpatialScaleGesture
-                    if (!handoff.isSuperseded(HomeFloatingGestureOwner.SCALE, id)) {
-                        session.cancel(models, onManipulationActiveChanged)
-                        handoff.clear(HomeFloatingGestureOwner.SCALE, id)
-                    } else {
-                        session.clear()
-                    }
-                },
-            ) { value ->
-                val controller = models() ?: return@detectSpatialScaleGesture
-                val id = session.id ?: return@detectSpatialScaleGesture
-                if (handoff.isSuperseded(HomeFloatingGestureOwner.SCALE, id)) return@detectSpatialScaleGesture
-                val current = session.latest ?: session.base ?: return@detectSpatialScaleGesture
-                val next = controller.nextScaleTransform(current, value.scaleValue)
-                session.latest = next
-                handoff.update(HomeFloatingGestureOwner.SCALE, id, next)
-                controller.previewTransform(id, next)
+                activeChanged = { activity.value(it) },
+            )
+        }
+        val pointerActivity = rememberUpdatedState(onTargetPointerActiveChanged)
+        val tracked = remember(session) { TrackedHomeGrab(session) }
+        DisposableEffect(controller, tracked) {
+            controller.trackedGrab = tracked
+            onDispose {
+                tracked.finish(cancelled = true)
+                controller.trackedGrab = null
             }
         }
+        modelGrabInput(context, session, controller::idFor, controller::viewPointInHome,
+            trackedActive = { tracked.active }, trackedGeneration = { tracked.generation }) { target ->
+            tracked.pointerTarget = target
+            pointerActivity.value(target != null)
+        }
     }
-
-private fun com.pico.spatial.ui.geometry.Offset3D.toVector3(): Vector3 = Vector3(x, y, z)
+}
 
 private fun Vector3.hasUsableSize(): Boolean =
     x.isFinite() && y.isFinite() && z.isFinite() && max(x, max(y, z)) > 0.0001f
@@ -843,5 +615,3 @@ private val HomeFloatingModelSpecs = listOf(
     HomeFloatingModelSpec("walkman", "asset://home_floating/sony_wolkman_mk90.glb", PanelPosition(0.32800418f, 0.6694992f, -0.0847761f), 0.28f, 1.0f, 97.5f, 4.8f),
     HomeFloatingModelSpec("diorama", "asset://home_floating/stylised_sky_player_home_dioroma.glb", PanelPosition(0.92783827f, 0.6136984f, 0.0650205f), 0.36f, 2.6439342f, -76.667f, 5.6f),
 )
-
-private val HomeFloatingModelSpecsById = HomeFloatingModelSpecs.associateBy { it.id }

@@ -72,7 +72,7 @@ fun createCuriosityExampleDocument(
     document.objects["nasa_intro_copy"] = SceneObject(
         id = "nasa_intro_copy",
         type = ObjectType.TEXT,
-        source = "这是一份 NASA 的打印模型\n\n跟随接下来的引导\n我们一起把好奇号装起来\n重新出发火星\n\n准备好了吗？",
+        source = "这是一份 NASA 的打印模型\n\n跟随接下来的引导\n我们一起把好奇号装起来\n重新出发火星\n\n单手捏住移动零件\n双手捏住可转向、缩放",
         displayName = "项目说明",
         textColor = 0xFFF4E7D3,
         isLocked = true,

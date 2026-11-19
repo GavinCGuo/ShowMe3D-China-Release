@@ -25,7 +25,7 @@ val dinosaurDetectiveModelFiles = linkedMapOf(
 /** Installs the packaged lesson into the existing file:// model pipeline. */
 object DinosaurDetectiveExampleAssetInstaller {
     private const val ASSET_ROOT = "examples/dinosaur"
-    private const val INSTALL_VERSION = "v3"
+    private const val INSTALL_VERSION = "v4"
 
     private val files = dinosaurDetectiveModelFiles.values + listOf(
         "trex_ct_scan_panel.png",
